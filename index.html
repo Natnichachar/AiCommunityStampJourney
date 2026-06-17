@@ -114,9 +114,11 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 
 /* Stamp circles */
 .sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;}
-.stamp{width:100%;aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .2s;}
+.stamp{width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .2s;position:relative;overflow:hidden;}
 .stamp.col{background:var(--terra-p);border:2.5px solid var(--terra);}
 .stamp.unc{background:#fff;border:2.5px dashed var(--terra-l);}
+.stamp.col::after{content:'✓';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:32px;font-weight:700;line-height:1;opacity:.22;z-index:2;pointer-events:none;}
+.stamp.col .snum{position:relative;z-index:1;}
 .stamp.m5.col{border-color:var(--green);background:var(--green-l);}
 .stamp.m10.col{border-color:var(--blue);background:var(--blue-l);}
 .snum{font-size:22px;font-weight:700;line-height:1;opacity:.55;display:block;text-align:center;}
@@ -287,9 +289,13 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .a-stamp-val{font-size:11px;font-weight:700;color:var(--tm);}
 .mini-bar{height:6px;background:var(--cream-d);border-radius:99px;}
 .mini-fill{height:100%;background:var(--terra);border-radius:99px;}
-.stamp-history{margin-bottom:10px;}
-.stamp-history-title{font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
-.stamp-history-rows{display:flex;flex-direction:column;gap:4px;}
+.stamp-history{margin-bottom:10px;border-radius:var(--r-sm);background:var(--cream);overflow:hidden;}
+.stamp-history-title{font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.8px;padding:9px 10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none;}
+.stamp-history-title::-webkit-details-marker{display:none;}
+.stamp-history-title::after{content:'⌄';font-size:13px;color:var(--terra);transition:transform .2s;}
+.stamp-history[open] .stamp-history-title::after{transform:rotate(180deg);}
+.history-count{font-size:10px;font-weight:700;letter-spacing:0;text-transform:none;border-radius:99px;background:var(--blue-l);color:var(--blue-d);padding:3px 8px;margin-left:auto;}
+.stamp-history-rows{display:flex;flex-direction:column;gap:4px;padding:0 8px 8px;}
 .shrow{display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:5px 8px;border-radius:7px;background:var(--cream);}
 .shrow-name{color:var(--tm);font-weight:600;}
 .shrow-ts{color:var(--ts);display:flex;align-items:center;gap:3px;}
@@ -782,10 +788,7 @@ function renderStamps() {
     var div    = document.createElement('div');
     var mc     = i===5 ? ' m5' : i===10 ? ' m10' : '';
     div.className = 'stamp ' + (filled ? 'col' : 'unc') + mc;
-    var ts = (u.scanTimestamps && u.scanTimestamps[i]) ? u.scanTimestamps[i] : '';
-    var tsShort = ts ? ts.replace(/:\d{2}$/, '') : '';
-    div.innerHTML = '<span class="snum">' + i + '</span>' +
-      (filled && tsShort ? '<span class="stamp-ts">' + tsShort + '</span>' : '');
+    div.innerHTML = '<span class="snum">' + i + '</span>';
     grid.appendChild(div);
   }
   document.getElementById('p-count').textContent = u.stamps;
@@ -1321,7 +1324,7 @@ function renderAdminParticipants() {
 
     var historyRows = '';
     if (p.claimedSessions.length > 0) {
-      historyRows = '<div class="stamp-history"><div class="stamp-history-title">Scan history</div><div class="stamp-history-rows">';
+      historyRows = '<details class="stamp-history"><summary class="stamp-history-title"><span>Scan history</span><span class="history-count">' + p.claimedSessions.length + ' scans</span></summary><div class="stamp-history-rows">';
       p.claimedSessions.forEach(function(sid) {
         var sess = allSessions.find(function(s){ return s.id === sid; });
         var sname = sess ? sess.name : 'Session ' + sid;
@@ -1332,7 +1335,7 @@ function renderAdminParticipants() {
             '<span class="shrow-ts"><i class="ti ti-clock-hour-4"></i>' + ts + '</span>' +
           '</div>';
       });
-      historyRows += '</div></div>';
+      historyRows += '</div></details>';
     }
 
     card.innerHTML =
@@ -1507,9 +1510,11 @@ body{background:#E4DDD5;min-height:100vh;min-height:100dvh;display:flex;justify-
 
 /* Stamp circles */
 .sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;}
-.stamp{width:100%;aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .2s;}
+.stamp{width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .2s;position:relative;overflow:hidden;}
 .stamp.col{background:var(--terra-p);border:2.5px solid var(--terra);}
 .stamp.unc{background:#fff;border:2.5px dashed var(--terra-l);}
+.stamp.col::after{content:'✓';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:32px;font-weight:700;line-height:1;opacity:.22;z-index:2;pointer-events:none;}
+.stamp.col .snum{position:relative;z-index:1;}
 .stamp.m5.col{border-color:var(--green);background:var(--green-l);}
 .stamp.m10.col{border-color:var(--blue);background:var(--blue-l);}
 .snum{font-size:20px;font-weight:700;line-height:1;opacity:.55;display:block;text-align:center;}
@@ -1681,9 +1686,13 @@ body{background:#E4DDD5;min-height:100vh;min-height:100dvh;display:flex;justify-
 .a-stamp-val{font-size:11px;font-weight:700;color:var(--tm);}
 .mini-bar{height:6px;background:var(--cream-d);border-radius:99px;}
 .mini-fill{height:100%;background:var(--terra);border-radius:99px;}
-.stamp-history{margin-bottom:10px;}
-.stamp-history-title{font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
-.stamp-history-rows{display:flex;flex-direction:column;gap:4px;}
+.stamp-history{margin-bottom:10px;border-radius:var(--r-sm);background:var(--cream);overflow:hidden;}
+.stamp-history-title{font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.8px;padding:9px 10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none;}
+.stamp-history-title::-webkit-details-marker{display:none;}
+.stamp-history-title::after{content:'⌄';font-size:13px;color:var(--terra);transition:transform .2s;}
+.stamp-history[open] .stamp-history-title::after{transform:rotate(180deg);}
+.history-count{font-size:10px;font-weight:700;letter-spacing:0;text-transform:none;border-radius:99px;background:var(--blue-l);color:var(--blue-d);padding:3px 8px;margin-left:auto;}
+.stamp-history-rows{display:flex;flex-direction:column;gap:4px;padding:0 8px 8px;}
 .shrow{display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:5px 8px;border-radius:7px;background:var(--cream);}
 .shrow-name{color:var(--tm);font-weight:600;}
 .shrow-ts{color:var(--ts);display:flex;align-items:center;gap:3px;}
