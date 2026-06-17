@@ -235,8 +235,11 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .qr-status-pill.active{background:var(--green-l);color:var(--green-d);}
 .qr-status-pill.expired{background:var(--amber-l);color:var(--amber);}
 .qr-mgmt-body{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;}
-.qr-display-box{width:90px;height:90px;background:var(--cream-d);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
-.qr-display-box img{width:100%;height:100%;}
+.qr-display-wrap{display:flex;flex-direction:column;gap:8px;align-items:center;}
+.qr-display-box{width:180px;height:180px;background:#fff;border:1px solid #E8DDD4;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;padding:8px;}
+.qr-display-box img,.qr-display-box canvas{width:100%;height:100%;image-rendering:pixelated;}
+.btn-download-qr{width:100%;padding:9px 12px;background:#fff;color:var(--navy);border:1.5px solid var(--blue);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;}
+.btn-download-qr:hover{background:var(--blue-l);}
 .qr-controls{display:flex;flex-direction:column;gap:7px;}
 .duration-row{display:flex;align-items:center;gap:7px;}
 .duration-select{flex:1;padding:8px 10px;border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;}
@@ -999,10 +1002,18 @@ function renderQRManagement() {
 
     var qrHtml = '';
     if (isActive && s.qrToken) {
-      qrHtml = '<div class="qr-display-box" id="qr-img-' + s.id + '"></div>';
+      qrHtml = '<div class="qr-display-wrap">' +
+                 '<div class="qr-display-box" id="qr-img-' + s.id + '"></div>' +
+                 '<button class="btn-download-qr" onclick="downloadSessionQR(' + s.id + ')">' +
+                   '<i class="ti ti-download"></i> Download PNG' +
+                 '</button>' +
+               '</div>';
     } else {
-      qrHtml = '<div class="qr-display-box" style="color:var(--ts);font-size:11px;text-align:center;padding:8px;">' +
-               (isExpired ? '⏰ Expired' : 'No QR active') + '</div>';
+      qrHtml = '<div class="qr-display-wrap">' +
+                 '<div class="qr-display-box" style="color:var(--ts);font-size:11px;text-align:center;padding:8px;">' +
+                   (isExpired ? '⏰ Expired' : 'No QR active') +
+                 '</div>' +
+               '</div>';
     }
 
     var countdownHtml = isActive
@@ -1046,9 +1057,9 @@ function renderQRManagement() {
     if (isActive && s.qrToken) {
       try {
         new QRCode(document.getElementById('qr-img-' + s.id), {
-          text: s.qrToken, width: 90, height: 90,
+          text: s.qrToken, width: 220, height: 220,
           colorDark: '#2C1F14', colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.M
+          correctLevel: QRCode.CorrectLevel.L
         });
       } catch(e) { console.warn('QR render failed', e); }
     }
@@ -1110,6 +1121,59 @@ async function deactivateQR(sessionId) {
     }
     renderQRManagement();
   } catch(e) { alert('Error: ' + e.message); }
+}
+
+
+function sanitizeFilename(name) {
+  return String(name || 'session-qr').trim().replace(/[^a-z0-9-_]+/gi, '-').replace(/^-+|-+$/g, '') || 'session-qr';
+}
+
+function downloadSessionQR(sessionId) {
+  var s = allSessions.find(function(x){ return x.id === sessionId; });
+  if (!s || !s.qrToken) {
+    alert('There is no active QR code for this session yet.');
+    return;
+  }
+
+  var temp = document.createElement('div');
+  temp.style.position = 'fixed';
+  temp.style.left = '-99999px';
+  temp.style.top = '0';
+  document.body.appendChild(temp);
+
+  try {
+    new QRCode(temp, {
+      text: s.qrToken,
+      width: 1200,
+      height: 1200,
+      colorDark: '#2C1F14',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.L
+    });
+
+    setTimeout(function() {
+      try {
+        var canvas = temp.querySelector('canvas');
+        var img = temp.querySelector('img');
+        var href = canvas ? canvas.toDataURL('image/png') : (img ? img.src : '');
+        if (!href) throw new Error('Could not generate PNG file.');
+
+        var link = document.createElement('a');
+        link.href = href;
+        link.download = sanitizeFilename(s.name) + '-qr.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        alert('Download failed: ' + (err.message || String(err)));
+      } finally {
+        if (temp && temp.parentNode) temp.parentNode.removeChild(temp);
+      }
+    }, 50);
+  } catch (err) {
+    if (temp && temp.parentNode) temp.parentNode.removeChild(temp);
+    alert('Download failed: ' + (err.message || String(err)));
+  }
 }
 
 async function refreshAdminData() {
@@ -1461,8 +1525,11 @@ body{background:#E4DDD5;min-height:100vh;min-height:100dvh;display:flex;justify-
 .qr-status-pill.active{background:var(--green-l);color:var(--green-d);}
 .qr-status-pill.expired{background:var(--amber-l);color:var(--amber);}
 .qr-mgmt-body{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;}
-.qr-display-box{width:90px;height:90px;background:var(--cream-d);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
-.qr-display-box img{width:100%;height:100%;}
+.qr-display-wrap{display:flex;flex-direction:column;gap:8px;align-items:center;}
+.qr-display-box{width:180px;height:180px;background:#fff;border:1px solid #E8DDD4;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;padding:8px;}
+.qr-display-box img,.qr-display-box canvas{width:100%;height:100%;image-rendering:pixelated;}
+.btn-download-qr{width:100%;padding:9px 12px;background:#fff;color:var(--navy);border:1.5px solid var(--blue);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;}
+.btn-download-qr:hover{background:var(--blue-l);}
 .qr-controls{display:flex;flex-direction:column;gap:7px;}
 .duration-row{display:flex;align-items:center;gap:7px;}
 .duration-select{flex:1;padding:8px 10px;border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:14px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;}
