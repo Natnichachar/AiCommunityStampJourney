@@ -115,16 +115,17 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .stamp{width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .2s;position:relative;overflow:hidden;}
 .stamp.col{background:var(--terra-p);border:2.5px solid var(--terra);color:var(--terra);}
 .stamp.unc{background:#fff;border:2.5px dashed var(--terra-l);}
+.stamp-cat{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60%;height:60%;opacity:.18;z-index:1;pointer-events:none;color:var(--tm);display:block;}
 .stamp-cat-svg{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:68%;height:54%;color:currentColor;opacity:.18;z-index:1;pointer-events:none;}
 .stamp-cat-svg path{fill:currentColor;}
-.stamp.col .snum{position:relative;z-index:2;opacity:.70;}
+.stamp.col .snum{font-size:22px;font-weight:700;line-height:1;opacity:.7;display:block;text-align:center;}
 .stamp.m5.col{border-color:var(--green);background:var(--green-l);color:var(--green);}
 .stamp.m10.col{border-color:var(--blue);background:var(--blue-l);color:var(--blue);}
-.snum{font-size:22px;font-weight:700;line-height:1;opacity:.70;display:block;text-align:center;}
-.stamp.col .snum{color:var(--terra);opacity:.70;}
-.stamp.m5.col .snum{color:var(--green);opacity:.70;}
-.stamp.m10.col .snum{color:var(--blue);opacity:.70;}
-.stamp.unc .snum{color:var(--terra-l);opacity:.70;}
+.snum{font-size:22px;font-weight:700;line-height:1;opacity:.7;display:block;text-align:center;}
+.stamp.col .snum{font-size:22px;font-weight:700;line-height:1;opacity:.7;display:block;text-align:center;}
+.stamp.m5.col .snum{font-size:22px;font-weight:700;line-height:1;opacity:.7;display:block;text-align:center;}
+.stamp.m10.col .snum{font-size:22px;font-weight:700;line-height:1;opacity:.7;display:block;text-align:center;}
+.stamp.unc .snum{font-size:22px;font-weight:700;line-height:1;opacity:.7;display:block;text-align:center;}
 .stamp-ts{font-size:7px;color:var(--ts);opacity:.7;text-align:center;line-height:1.2;margin-top:2px;max-width:100%;overflow:hidden;}
 
 .ptxt{font-size:14px;color:var(--ts);}
@@ -790,7 +791,7 @@ function renderStamps() {
     var catSvg = '<svg class="stamp-cat-svg" viewBox="0 0 120 82" aria-hidden="true">' +
       '<path d="M27 34C24 22 26 10 34 2C47 7 55 17 60 28C65 17 73 7 86 2C94 10 96 22 93 34C104 42 110 54 110 64C110 77 88 82 60 82C32 82 10 77 10 64C10 54 16 42 27 34Z"></path>' +
     '</svg>';
-    div.innerHTML = '<span class="snum">' + i + '</span>' + (filled ? catSvg : '');
+    div.innerHTML = '<span class="snum">' + i + '</span>' + (filled ? '<svg class="stamp-cat" viewBox="0 0 100 100" aria-hidden="true"><path d="M14 18 Q14 13 19 12 L39 19 Q45 21 50 21 Q55 21 61 19 L81 12 Q86 13 86 18 L83 48 Q87 56 85 63 L83 68 L92 68 Q94 68 94 70 L94 71 Q94 73 92 73 L82 73 L80 76 L92 80 Q94 81 93 83 L92 85 Q91 87 88 86 L77 82 Q67 96 50 96 Q33 96 23 82 L12 86 Q9 87 8 85 L7 83 Q6 81 8 80 L20 76 L18 73 L8 73 Q6 73 6 71 L6 70 Q6 68 8 68 L17 68 L15 63 Q13 56 17 48 Z" fill="currentColor"/></svg>' : '');
     grid.appendChild(div);
   }
   document.getElementById('p-count').textContent = u.stamps;
