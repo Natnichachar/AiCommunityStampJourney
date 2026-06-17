@@ -1,18 +1,1225 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI Community Stamp Scanner</title>
-    <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Community — Stamp Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<!-- QR code generator (renders QR from text) -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<!-- jsQR (decodes QR from camera frame) -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<style>
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --terra:#C4622D;--terra-l:#E8A882;--terra-p:#F5E6DC;
+  --cream:#FAF7F2;--cream-d:#F0EAE0;
+  --tm:#2C1F14;--ts:#7A5C44;
+  --green:#00704A;--green-l:#EAF7F0;--green-d:#004D33;
+  --navy:#1A3A5C;--blue:#2D6EC4;--blue-l:#EAF3FF;--blue-d:#0C447C;
+  --gray:#6B7280;--gray-l:#F3F4F6;
+  --red:#DC2626;--red-l:#FEE2E2;
+  --amber:#D97706;--amber-l:#FEF3C7;
+  --font:'Montserrat',sans-serif;
+  --r-sm:10px;--r-md:14px;--r-lg:20px;--r-xl:26px;
+  --shadow:0 2px 12px rgba(44,31,20,.08);
+  --shadow-lg:0 8px 32px rgba(44,31,20,.14);
+}
+body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;font-family:var(--font);}
+
+/* ── App shell ── */
+.app{width:100%;max-width:430px;min-height:100vh;background:var(--cream);display:flex;flex-direction:column;position:relative;}
+.screen{display:none;flex-direction:column;min-height:100vh;}
+.screen.active{display:flex;}
+
+/* ══════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════ */
+.auth-hero{background:var(--terra);padding:48px 28px 36px;text-align:center;}
+.auth-hero-icon{width:64px;height:64px;background:rgba(255,255,255,.2);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+.auth-hero-icon i{font-size:32px;color:#fff;}
+.auth-hero h1{font-size:26px;font-weight:700;color:#fff;margin-bottom:4px;}
+.auth-hero h2{font-size:16px;font-weight:500;color:rgba(255,255,255,.8);margin-bottom:10px;}
+.auth-hero p{font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;}
+.auth-body{padding:28px 24px 40px;flex:1;}
+.auth-tabs{display:flex;background:var(--cream-d);border-radius:var(--r-md);padding:4px;margin-bottom:24px;}
+.auth-tab{flex:1;padding:10px 0;font-size:13px;font-weight:700;text-align:center;cursor:pointer;border:none;background:transparent;border-radius:10px;color:var(--ts);font-family:var(--font);transition:.2s;}
+.auth-tab.active{background:#fff;color:var(--terra);box-shadow:var(--shadow);}
+.form-group{margin-bottom:16px;}
+.form-label{font-size:12px;font-weight:700;color:var(--ts);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.8px;}
+.form-input{width:100%;padding:13px 16px;border:1.5px solid var(--cream-d);border-radius:var(--r-md);font-size:14px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:var(--terra);}
+.form-input::placeholder{color:#C4B5A8;}
+.form-select{width:100%;padding:13px 16px;border:1.5px solid var(--cream-d);border-radius:var(--r-md);font-size:14px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;appearance:none;}
+.form-select:focus{border-color:var(--terra);}
+.form-hint{font-size:11px;color:var(--ts);margin-top:5px;line-height:1.5;}
+.btn-primary{width:100%;padding:16px;background:var(--terra);color:#fff;border:none;border-radius:var(--r-md);font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:opacity .2s;}
+.btn-primary:hover{opacity:.9;}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;}
+.auth-note{background:var(--terra-p);border-radius:var(--r-md);padding:12px 16px;font-size:12px;color:#7A2E0A;line-height:1.7;margin-top:16px;}
+.auth-note strong{font-weight:700;}
+.error-msg{background:var(--red-l);border:1px solid #FCA5A5;border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px;display:none;}
+
+/* ══════════════════════════════════════════════
+   PARTICIPANT VIEW
+══════════════════════════════════════════════ */
+.p-header{background:var(--terra);padding:24px 20px 22px;}
+.p-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.p-header-brand{display:flex;align-items:center;gap:10px;}
+.p-header-icon{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:11px;display:flex;align-items:center;justify-content:center;}
+.p-header-icon i{font-size:20px;color:#fff;}
+.p-header-title{font-size:16px;font-weight:700;color:#fff;}
+.p-header-subtitle{font-size:12px;color:rgba(255,255,255,.7);}
+.btn-ghost{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:5px;}
+.p-header-welcome{font-size:22px;font-weight:700;color:#fff;margin-bottom:3px;}
+.p-header-sub{font-size:13px;color:rgba(255,255,255,.7);}
+.p-body{flex:1;padding-bottom:80px;}
+.section{padding:20px 16px 0;}
+.slabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ts);margin-bottom:12px;}
+.card{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:18px;box-shadow:var(--shadow);}
+
+/* Milestone cards */
+.ms-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.ms-card{border-radius:var(--r-md);border:1.5px solid #E8DDD4;padding:12px 10px;display:flex;gap:9px;align-items:center;transition:.3s;}
+.ms-card.sbux-on{border-color:var(--green);background:var(--green-l);}
+.ms-card.gadget-on{border-color:var(--blue);background:var(--blue-l);}
+.ms-card.redeemed{border-color:#C4B5A8;background:#F5F2EE;}
+.ms-gfx{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.g-sbux{background:var(--green);}.g-gadget{background:var(--navy);}
+.ms-card.redeemed .g-sbux,.ms-card.redeemed .g-gadget{background:#B0A898;}
+.ms-info h4{font-size:12px;font-weight:700;color:var(--tm);margin-bottom:2px;line-height:1.3;}
+.ms-info p{font-size:11px;color:var(--ts);}
+.ms-card.sbux-on .ms-info p{color:var(--green);font-weight:600;}
+.ms-card.gadget-on .ms-info p{color:var(--blue);font-weight:600;}
+.ms-card.redeemed .ms-info p{color:#B0A898;font-weight:600;}
+
+/* Progress track */
+.track{margin-bottom:20px;}
+.track-lbl{display:flex;justify-content:space-between;margin-bottom:5px;}
+.tl{font-size:10px;font-weight:700;}
+.tl.s{color:var(--ts);}.tl.m{color:var(--green);}.tl.e{color:var(--blue);}
+.tline{height:8px;background:var(--cream-d);border-radius:99px;}
+.tfill{height:100%;background:var(--terra);border-radius:99px;transition:width .5s;}
+.tdots{display:flex;justify-content:space-between;margin-top:6px;}
+.dot{width:13px;height:13px;border-radius:50%;border:2.5px solid var(--terra-l);background:#fff;transition:.3s;}
+.dot.r{background:var(--terra);border-color:var(--terra);}
+.dot.rg{background:var(--green);border-color:var(--green);}
+.dot.rb{background:var(--blue);border-color:var(--blue);}
+
+/* Stamp circles */
+.sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;}
+.stamp{width:100%;aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .2s;}
+.stamp.col{background:var(--terra-p);border:2.5px solid var(--terra);}
+.stamp.unc{background:#fff;border:2.5px dashed var(--terra-l);}
+.stamp.m5.col{border-color:var(--green);background:var(--green-l);}
+.stamp.m10.col{border-color:var(--blue);background:var(--blue-l);}
+.snum{font-size:22px;font-weight:700;line-height:1;opacity:.55;display:block;text-align:center;}
+.stamp.col .snum{color:var(--terra);opacity:.6;}
+.stamp.m5.col .snum{color:var(--green);opacity:.6;}
+.stamp.m10.col .snum{color:var(--blue);opacity:.6;}
+.stamp.unc .snum{color:var(--terra-l);opacity:.55;}
+.stamp-ts{font-size:7px;color:var(--ts);opacity:.7;text-align:center;line-height:1.2;margin-top:2px;max-width:100%;overflow:hidden;}
+
+.ptxt{font-size:14px;color:var(--ts);}
+.ptxt strong{color:var(--tm);font-weight:700;}
+
+/* QR reward section */
+.qr-section{margin-top:16px;border-top:1px solid var(--cream-d);padding-top:16px;}
+.qr-section h4{font-size:13px;font-weight:700;color:var(--tm);margin-bottom:4px;}
+.qr-section p{font-size:12px;color:var(--ts);margin-bottom:12px;line-height:1.5;}
+.qr-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.qr-card{border-radius:var(--r-md);border:1.5px solid #E8DDD4;padding:14px;text-align:center;transition:.3s;}
+.qr-card.active-qr{border-color:var(--terra);background:var(--terra-p);}
+.qr-card.locked{opacity:.4;}
+.qr-card.redeemed-qr{border-color:#999;background:#F5F2EE;}
+.qr-box{width:76px;height:76px;border-radius:12px;background:var(--tm);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;}
+.qr-card.redeemed-qr .qr-box{background:#999;}
+.qr-lbl{font-size:12px;font-weight:700;color:var(--tm);margin-bottom:3px;}
+.qr-sub{font-size:11px;color:var(--ts);}
+.qr-card.redeemed-qr .qr-lbl,.qr-card.redeemed-qr .qr-sub{color:#999;}
+.redeemed-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;background:#E0D8D0;color:#888;margin-top:6px;}
+
+/* Session list */
+.sess-grid{display:grid;gap:10px;}
+.sess-card{background:#fff;border-radius:var(--r-md);border:.5px solid #E8DDD4;padding:14px 15px;display:flex;gap:12px;align-items:flex-start;box-shadow:var(--shadow);}
+.sess-ic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sess-ic.col{background:var(--terra-p);}.sess-ic.col i{color:var(--terra);}
+.sess-ic.avl{background:var(--blue-l);}.sess-ic.avl i{color:var(--blue);}
+.sess-ic.upc{background:var(--cream-d);}.sess-ic.upc i{color:#A09080;}
+.sname{font-size:14px;font-weight:700;color:var(--tm);}
+.stype{font-size:11px;color:var(--ts);font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin:3px 0 4px;}
+.sdesc{font-size:12px;color:var(--ts);line-height:1.5;margin-bottom:6px;}
+.stop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px;}
+.pb{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--blue-l);color:var(--blue);}
+.spill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;}
+.spill.col{background:var(--green-l);color:var(--green-d);}
+.spill.avl{background:var(--blue-l);color:var(--blue-d);}
+.spill.upc{background:var(--cream-d);color:var(--ts);}
+.scan-ts{font-size:11px;color:var(--ts);margin-top:5px;display:flex;align-items:center;gap:4px;}
+.scan-ts i{font-size:12px;color:var(--terra-l);}
+
+/* Scan QR button */
+.p-actions{padding:20px 16px 0;display:flex;flex-direction:column;gap:10px;}
+.smsg{border-radius:var(--r-md);padding:13px 16px;display:flex;align-items:center;gap:10px;}
+.smsg.s5{background:var(--green-l);border:1.5px solid var(--green);}
+.smsg.s10{background:var(--blue-l);border:1.5px solid var(--blue);}
+.smsg.s5 i{color:var(--green);font-size:20px;}
+.smsg.s10 i{color:var(--blue);font-size:20px;}
+.smsg span{font-size:13px;font-weight:600;}
+.smsg.s5 span{color:var(--green-d);}.smsg.s10 span{color:var(--blue-d);}
+.btn-scan{background:var(--terra);color:#fff;border:none;border-radius:var(--r-md);padding:16px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;width:100%;font-family:var(--font);transition:opacity .2s;}
+.btn-scan:hover{opacity:.9;}
+.btn-scan:disabled{opacity:.4;cursor:not-allowed;}
+.feedback-card{background:#fff;border-radius:var(--r-md);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);}
+.feedback-card h4{font-size:13px;font-weight:700;color:var(--tm);margin-bottom:5px;}
+.feedback-card p{font-size:12px;color:var(--ts);margin-bottom:13px;}
+.feedback-inner{display:flex;gap:13px;align-items:center;}
+.qr-mock{width:56px;height:56px;border-radius:9px;background:var(--cream-d);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.btn-feedback{background:#fff;color:var(--terra);border:1.5px solid var(--terra-l);border-radius:var(--r-sm);padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:var(--font);margin-top:8px;transition:background .2s;}
+.btn-feedback:hover{background:var(--terra-p);}
+
+/* ══════════════════════════════════════════════
+   QR SCANNER MODAL (participant)
+══════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.scanner-modal{background:#fff;border-radius:var(--r-xl);width:100%;max-width:380px;overflow:hidden;box-shadow:var(--shadow-lg);}
+.scanner-header{background:var(--tm);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;}
+.scanner-header h3{font-size:16px;font-weight:700;color:#fff;}
+.btn-close-modal{background:rgba(255,255,255,.15);border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:18px;}
+.scanner-body{padding:20px;}
+.scanner-viewfinder{position:relative;width:100%;padding-bottom:100%;border-radius:var(--r-lg);overflow:hidden;background:#000;margin-bottom:16px;}
+.scanner-viewfinder video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.scanner-viewfinder canvas{position:absolute;inset:0;width:100%;height:100%;display:none;}
+.scan-guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.scan-guide-box{width:55%;height:55%;border:3px solid rgba(255,255,255,.85);border-radius:12px;box-shadow:0 0 0 2000px rgba(0,0,0,.4);}
+.scanner-status{text-align:center;font-size:13px;color:var(--ts);margin-bottom:14px;min-height:20px;font-weight:500;}
+.scanner-status.success{color:var(--green);font-weight:700;}
+.scanner-status.error{color:var(--red);}
+.scanner-note{font-size:11px;color:var(--ts);text-align:center;line-height:1.6;}
+.scan-result-card{display:none;background:var(--green-l);border:1.5px solid var(--green);border-radius:var(--r-md);padding:16px;text-align:center;margin-bottom:14px;}
+.scan-result-card.error-card{background:var(--red-l);border-color:var(--red);}
+.scan-result-icon{font-size:32px;margin-bottom:8px;}
+.scan-result-card h4{font-size:15px;font-weight:700;color:var(--green-d);margin-bottom:4px;}
+.scan-result-card.error-card h4{color:var(--red);}
+.scan-result-card p{font-size:12px;color:var(--green-d);line-height:1.5;}
+.scan-result-card.error-card p{color:var(--red);}
+
+/* ══════════════════════════════════════════════
+   ADMIN VIEW
+══════════════════════════════════════════════ */
+.a-header{background:var(--navy);padding:24px 20px 20px;}
+.a-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.a-header h2{font-size:20px;font-weight:700;color:#fff;}
+.a-header p{font-size:13px;color:rgba(255,255,255,.65);}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.stat-card{background:#fff;border-radius:var(--r-md);border:.5px solid #E8DDD4;padding:14px 16px;text-align:center;box-shadow:var(--shadow);}
+.stat-num{font-size:28px;font-weight:700;color:var(--terra);}
+.stat-num.green{color:var(--green);}
+.stat-lbl{font-size:11px;color:var(--ts);font-weight:600;margin-top:3px;}
+
+/* QR Management panel */
+.qr-mgmt-list{display:grid;gap:10px;}
+.qr-mgmt-card{background:#fff;border-radius:var(--r-md);border:.5px solid #E8DDD4;padding:14px 16px;box-shadow:var(--shadow);}
+.qr-mgmt-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.qr-mgmt-name{font-size:14px;font-weight:700;color:var(--tm);}
+.qr-mgmt-meta{font-size:11px;color:var(--ts);margin-top:1px;}
+.qr-status-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;flex-shrink:0;}
+.qr-status-pill.inactive{background:var(--gray-l);color:var(--gray);}
+.qr-status-pill.active{background:var(--green-l);color:var(--green-d);}
+.qr-status-pill.expired{background:var(--amber-l);color:var(--amber);}
+.qr-mgmt-body{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;}
+.qr-display-box{width:90px;height:90px;background:var(--cream-d);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.qr-display-box img{width:100%;height:100%;}
+.qr-controls{display:flex;flex-direction:column;gap:7px;}
+.duration-row{display:flex;align-items:center;gap:7px;}
+.duration-select{flex:1;padding:8px 10px;border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;}
+.duration-select:focus{border-color:var(--terra);}
+.btn-activate{padding:9px 14px;background:var(--terra);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .2s;flex-shrink:0;}
+.btn-activate:hover{opacity:.9;}
+.btn-activate:disabled{opacity:.4;cursor:not-allowed;}
+.btn-deactivate{padding:9px 14px;background:#fff;color:var(--red);border:1.5px solid var(--red);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;width:100%;}
+.btn-deactivate:hover{background:var(--red-l);}
+.countdown{font-size:12px;font-weight:700;color:var(--amber);display:flex;align-items:center;gap:4px;}
+.countdown.expired{color:var(--red);}
+.countdown i{font-size:14px;}
+.scan-count-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;background:var(--blue-l);color:var(--blue-d);border-radius:99px;padding:3px 9px;}
+
+/* Admin search/filter */
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-input{width:100%;padding:12px 16px 12px 42px;border:1.5px solid var(--cream-d);border-radius:var(--r-md);font-size:14px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--terra);}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ts);font-size:18px;pointer-events:none;}
+.filter-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fbtn{flex-shrink:0;padding:8px 14px;border-radius:99px;border:1.5px solid var(--cream-d);background:#fff;font-size:12px;font-weight:700;color:var(--ts);cursor:pointer;font-family:var(--font);white-space:nowrap;transition:.2s;}
+.fbtn.active{background:var(--terra);border-color:var(--terra);color:#fff;}
+
+/* Admin participant cards */
+.a-table{display:flex;flex-direction:column;gap:10px;}
+.a-card{background:#fff;border-radius:var(--r-md);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);}
+.a-card-top{display:flex;align-items:center;gap:11px;margin-bottom:12px;}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--terra-p);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--terra);flex-shrink:0;}
+.a-pname{font-size:14px;font-weight:700;color:var(--tm);}
+.a-pmeta{font-size:11px;color:var(--ts);}
+.a-stamp-bar{margin-bottom:12px;}
+.a-stamp-label{display:flex;justify-content:space-between;margin-bottom:4px;}
+.a-stamp-lbl{font-size:11px;font-weight:600;color:var(--ts);}
+.a-stamp-val{font-size:11px;font-weight:700;color:var(--tm);}
+.mini-bar{height:6px;background:var(--cream-d);border-radius:99px;}
+.mini-fill{height:100%;background:var(--terra);border-radius:99px;}
+.stamp-history{margin-bottom:10px;}
+.stamp-history-title{font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.stamp-history-rows{display:flex;flex-direction:column;gap:4px;}
+.shrow{display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:5px 8px;border-radius:7px;background:var(--cream);}
+.shrow-name{color:var(--tm);font-weight:600;}
+.shrow-ts{color:var(--ts);display:flex;align-items:center;gap:3px;}
+.shrow-ts i{font-size:11px;color:var(--terra-l);}
+.reward-rows{display:flex;flex-direction:column;gap:7px;}
+.rrow{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border-radius:var(--r-sm);background:var(--cream);}
+.rleft{display:flex;align-items:center;gap:8px;}
+.ricon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ri-s{background:var(--green);}.ri-g{background:var(--navy);}
+.rname{font-size:12px;font-weight:700;color:var(--tm);}
+.rsub{font-size:10px;color:var(--ts);}
+.rbadge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;white-space:nowrap;}
+.rbadge.eligible{background:var(--terra-p);color:#7A2E0A;}
+.rbadge.done{background:var(--green-l);color:var(--green-d);}
+.rbadge.locked{background:var(--gray-l);color:var(--gray);}
+.btn-mark{font-size:11px;font-weight:700;padding:6px 12px;border-radius:99px;border:1.5px solid var(--terra);background:#fff;color:var(--terra);cursor:pointer;font-family:var(--font);transition:.2s;white-space:nowrap;}
+.btn-mark:hover{background:var(--terra-p);}
+.redeemed-date{font-size:10px;color:var(--ts);margin-top:2px;}
+.no-results{text-align:center;padding:32px 20px;color:var(--ts);font-size:14px;}
+.no-results i{font-size:40px;display:block;margin-bottom:10px;color:var(--terra-l);}
+.mt-16{margin-top:16px;}.mt-12{margin-top:12px;}
+</style>
 </head>
 <body>
-    <!-- นี่คือการเจาะช่องดึงเว็บ Google ของคุณมาแสดง พร้อมปลดล็อคกล้อง -->
-    <iframe 
-        src="https://script.google.com/macros/s/AKfycbwiNiqAj0qZjy9XrSsdMBy1nOkSvVxPDZIJt7fsPWL-xOj7qNxQKAd5Tm9mAZdHLluY8A/exec" 
-        allow="camera; microphone">
-    </iframe>
+<div class="app">
+
+<!-- ══════════════════════════════════
+     SCREEN: AUTH
+══════════════════════════════════ -->
+<div class="screen active" id="screen-auth">
+  <div class="auth-hero">
+    <div class="auth-hero-icon"><i class="ti ti-robot"></i></div>
+    <h1>AI Community</h1>
+    <h2>Stamp Journey</h2>
+    <p>Collect stamps as you join each AI Community session and unlock rewards.</p>
+  </div>
+  <div class="auth-body">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup')">Create Account</button>
+    </div>
+    <div id="form-login">
+      <div id="login-error" class="error-msg"></div>
+      <div class="form-group">
+        <label class="form-label">Organisation Email</label>
+        <input class="form-input" id="login-email" type="email" placeholder="you@company.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-password" type="password" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" id="btn-login" onclick="handleLogin()">
+        <i class="ti ti-login" aria-hidden="true"></i> Sign In
+      </button>
+      <div class="auth-note" id="auth-note" style="margin-top:16px;">
+        <strong>Demo logins:</strong><br>
+        Participant: <code>arisa@company.com</code> / <code>pass123</code><br>
+        Admin: <code>admin@company.com</code> / <code>admin123</code>
+      </div>
+    </div>
+    <div id="form-signup" style="display:none;">
+      <div id="signup-error" class="error-msg"></div>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="su-name" type="text" placeholder="e.g. Arisa Tanaka">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Facility</label>
+        <select class="form-select" id="su-facility">
+          <option value="">Select your facility</option>
+          <option>Bangkok HQ</option>
+          <option>Chiang Mai Branch</option>
+          <option>Phuket Office</option>
+          <option>Remote / WFH</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Organisation Email</label>
+        <input class="form-input" id="su-email" type="email" placeholder="you@company.com">
+        <p class="form-hint">Use your official company email address.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="su-password" type="password" placeholder="Min. 8 characters">
+      </div>
+      <button class="btn-primary" id="btn-signup" onclick="handleSignUp()">
+        <i class="ti ti-user-plus" aria-hidden="true"></i> Create Account
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN: PARTICIPANT
+══════════════════════════════════ -->
+<div class="screen" id="screen-participant">
+  <div class="p-header">
+    <div class="p-header-top">
+      <div class="p-header-brand">
+        <div class="p-header-icon"><i class="ti ti-robot"></i></div>
+        <div>
+          <div class="p-header-title">AI Community</div>
+          <div class="p-header-subtitle">Stamp Journey</div>
+        </div>
+      </div>
+      <button class="btn-ghost" onclick="logout()"><i class="ti ti-logout" style="font-size:13px;"></i> Sign out</button>
+    </div>
+    <div class="p-header-welcome" id="p-welcome">Hello 👋</div>
+    <div class="p-header-sub" id="p-facility"></div>
+  </div>
+
+  <div class="p-body">
+    <div class="section">
+      <div class="slabel">Your stamp card</div>
+      <div class="card">
+        <div class="ms-row">
+          <div class="ms-card" id="p-ms5">
+            <div class="ms-gfx g-sbux">
+              <svg width="22" height="22" viewBox="0 0 26 26" fill="none">
+                <circle cx="13" cy="10" r="5" fill="white" opacity=".9"/>
+                <path d="M9 15 Q13 20 17 15" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <ellipse cx="13" cy="10" rx="3" ry="1.2" fill="#00704A" opacity=".35"/>
+              </svg>
+            </div>
+            <div class="ms-info"><h4>Starbucks card</h4><p id="p-ms5-sub">Unlock at 5 stamps</p></div>
+          </div>
+          <div class="ms-card" id="p-ms10">
+            <div class="ms-gfx g-gadget">
+              <svg width="22" height="22" viewBox="0 0 26 26" fill="none">
+                <rect x="6" y="4" width="14" height="18" rx="2.5" fill="white" opacity=".15"/>
+                <rect x="8" y="6" width="10" height="11" rx="1.5" fill="white" opacity=".9"/>
+                <circle cx="13" cy="20" r="1.2" fill="white" opacity=".8"/>
+              </svg>
+            </div>
+            <div class="ms-info"><h4>Free gadget</h4><p id="p-ms10-sub">Unlock at 10 stamps</p></div>
+          </div>
+        </div>
+        <div class="track">
+          <div class="track-lbl">
+            <span class="tl s">Start</span>
+            <span class="tl m">5 pts ☕</span>
+            <span class="tl e">10 pts 🎁</span>
+          </div>
+          <div class="tline"><div class="tfill" id="p-fill"></div></div>
+          <div class="tdots">
+            <div class="dot r"></div>
+            <div class="dot" id="p-d5"></div>
+            <div class="dot" id="p-d10"></div>
+          </div>
+        </div>
+        <div class="sgrid" id="p-stamps"></div>
+        <p class="ptxt">Collected: <strong id="p-count">0</strong> / 10 stamps</p>
+        <div class="qr-section">
+          <h4>Your rewards</h4>
+          <p>Show your QR code to the facilitator to redeem. Only the facilitator can mark it as redeemed.</p>
+          <div class="qr-cards">
+            <div class="qr-card locked" id="qr5-card">
+              <div class="qr-box"><svg width="60" height="60" viewBox="0 0 60 60" id="qr5-svg"></svg></div>
+              <div class="qr-lbl">Starbucks</div>
+              <div class="qr-sub" id="qr5-sub">5 stamps needed</div>
+            </div>
+            <div class="qr-card locked" id="qr10-card">
+              <div class="qr-box"><svg width="60" height="60" viewBox="0 0 60 60" id="qr10-svg"></svg></div>
+              <div class="qr-lbl">Free Gadget</div>
+              <div class="qr-sub" id="qr10-sub">10 stamps needed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section mt-16">
+      <div class="slabel">Sessions</div>
+      <div class="sess-grid" id="p-sessions"></div>
+    </div>
+
+    <div class="p-actions">
+      <div id="p-msg5" style="display:none;" class="smsg s5">
+        <i class="ti ti-gift"></i>
+        <span>Starbucks card unlocked! Show your QR to the facilitator.</span>
+      </div>
+      <div id="p-msg10" style="display:none;" class="smsg s10">
+        <i class="ti ti-device-laptop"></i>
+        <span>Free gadget unlocked! Show your QR to the facilitator.</span>
+      </div>
+      <button class="btn-scan" id="btn-open-scanner" onclick="openScanner()">
+        <i class="ti ti-qrcode-scan"></i> Scan Session QR Code
+      </button>
+      <div class="feedback-card">
+        <h4>Give feedback</h4>
+        <p>Share your thoughts to help us improve the AI Community sessions.</p>
+        <div class="feedback-inner">
+          <div class="qr-mock"><i class="ti ti-qrcode" style="font-size:32px;color:var(--ts);"></i></div>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:var(--tm);margin-bottom:3px;">Scan to give feedback</p>
+            <p style="font-size:11px;color:var(--ts);">Or open the form directly</p>
+            <button class="btn-feedback" onclick="alert('Feedback form opens here.')">
+              <i class="ti ti-message-circle"></i> Open form
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN: ADMIN
+══════════════════════════════════ -->
+<div class="screen" id="screen-admin">
+  <div class="a-header">
+    <div class="a-header-top">
+      <div>
+        <h2><i class="ti ti-shield-check" style="font-size:18px;margin-right:6px;"></i>Admin Panel</h2>
+        <p id="a-logged-as"></p>
+      </div>
+      <button class="btn-ghost" onclick="logout()"><i class="ti ti-logout" style="font-size:13px;"></i> Sign out</button>
+    </div>
+  </div>
+
+  <div class="p-body">
+    <div class="section">
+      <div class="slabel">Overview</div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num" id="a-total">0</div><div class="stat-lbl">Total participants</div></div>
+        <div class="stat-card"><div class="stat-num green" id="a-redeemed">0</div><div class="stat-lbl">Rewards redeemed</div></div>
+        <div class="stat-card"><div class="stat-num" id="a-eligible" style="color:var(--blue);">0</div><div class="stat-lbl">Eligible, not redeemed</div></div>
+        <div class="stat-card"><div class="stat-num" id="a-pending" style="color:var(--gray);">0</div><div class="stat-lbl">Not yet eligible</div></div>
+      </div>
+    </div>
+
+    <div class="section mt-16">
+      <div class="slabel">Session QR Codes</div>
+      <div class="qr-mgmt-list" id="qr-mgmt-list"></div>
+    </div>
+
+    <div class="section mt-16">
+      <div class="slabel">Participants</div>
+      <div class="search-wrap">
+        <i class="ti ti-search search-icon"></i>
+        <input class="search-input" id="a-search" type="text" placeholder="Search by name or email…" oninput="renderAdminParticipants()">
+      </div>
+      <div class="filter-row">
+        <button class="fbtn active" onclick="setFilter(this,'all')">All</button>
+        <button class="fbtn" onclick="setFilter(this,'eligible')">Eligible — not redeemed</button>
+        <button class="fbtn" onclick="setFilter(this,'sbux')">Starbucks redeemed</button>
+        <button class="fbtn" onclick="setFilter(this,'both')">Both redeemed</button>
+      </div>
+    </div>
+
+    <div class="section mt-12">
+      <div class="a-table" id="a-table"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     QR SCANNER MODAL
+══════════════════════════════════ -->
+<div class="modal-overlay" id="scanner-overlay">
+  <div class="scanner-modal">
+    <div class="scanner-header">
+      <h3><i class="ti ti-qrcode-scan" style="margin-right:6px;"></i>Scan Session QR</h3>
+      <button class="btn-close-modal" onclick="closeScanner()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="scanner-body">
+      <div id="scan-result-card" class="scan-result-card" style="display:none;">
+        <div class="scan-result-icon" id="scan-result-icon">✅</div>
+        <h4 id="scan-result-title">Stamp collected!</h4>
+        <p id="scan-result-body"></p>
+      </div>
+      <div id="scanner-live-area">
+        <div class="scanner-viewfinder">
+          <video id="scanner-video" autoplay muted playsinline></video>
+          <canvas id="scanner-canvas"></canvas>
+          <div class="scan-guide"><div class="scan-guide-box"></div></div>
+        </div>
+        <div class="scanner-status" id="scanner-status">Initialising camera…</div>
+        <p class="scanner-note">Point your camera at the QR code displayed by the facilitator.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     JAVASCRIPT (Modified for GitHub Pages API Fetch)
+══════════════════════════════════ -->
+<script>
+'use strict';
+
+// ── Google Apps Script Web App URL ────────────────────────
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwiNiqAj0qZjy9XrSsdMBy1nOkSvVxPDZIJt7fsPWL-xOj7qNxQKAd5Tm9mAZdHLluY8A/exec';
+
+// ── State ──────────────────────────────────────────────────
+var currentUser   = null;
+var allSessions   = [];
+var adminUsers    = [];
+var activeFilter  = 'all';
+var scanStream    = null;
+var scanAnimFrame = null;
+var scanDone      = false;
+var countdownTimers = {};
+
+// ── API bridge (Using Fetch to bypass iframe issues) ──────
+function apiRequest(action, payload) {
+  if (!payload) payload = {};
+  payload.action = action;
+
+  return fetch(GAS_URL, {
+    method: 'POST',
+    redirect: 'follow', // Ensures Google's redirect handles properly
+    headers: {
+      // Using text/plain avoids strict CORS preflight blocking
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(function(response) {
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  })
+  .then(function(res) {
+    if (res.ok !== true) throw new Error(res.message || 'Request failed.');
+    return res;
+  })
+  .catch(function(err) {
+    throw new Error(err.message || String(err));
+  });
+}
+
+function busy(btnId, label) {
+  var b = document.getElementById(btnId);
+  if (!b) return;
+  b.dataset.orig = b.innerHTML;
+  b.disabled = true;
+  b.innerHTML = '<i class="ti ti-loader-2"></i> ' + label;
+}
+function restore(btnId) {
+  var b = document.getElementById(btnId);
+  if (!b) return;
+  if (b.dataset.orig) b.innerHTML = b.dataset.orig;
+  b.disabled = false;
+}
+
+// ── Normalise server data ─────────────────────────────────
+function normalizeUser(u) {
+  var name = String(u.name || u.full_name || '');
+  var initials = name.split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2) || 'U';
+  var claimed = Array.isArray(u.claimedSessions) ? u.claimedSessions.map(Number) : [];
+  return {
+    id:              String(u.id || u.user_id || ''),
+    name:            name,
+    initials:        initials,
+    facility:        String(u.facility || ''),
+    email:           String(u.email || '').toLowerCase(),
+    role:            String(u.role || 'participant').toLowerCase(),
+    stamps:          Number(u.stamps || 0),
+    claimedSessions: claimed,
+    scanTimestamps:  u.scanTimestamps || {},
+    sbux:            Boolean(u.sbux),
+    gadget:          Boolean(u.gadget),
+    sbuxDate:        u.sbuxDate || null,
+    gadgetDate:      u.gadgetDate || null
+  };
+}
+
+function normalizeSession(s) {
+  return {
+    id:          Number(s.id || s.session_id || 0),
+    name:        String(s.name || s.session_name || 'Session'),
+    type:        String(s.type || s.session_type || 'Sharing'),
+    desc:        String(s.desc || s.description || ''),
+    icon:        String(s.icon || 'ti-brain'),
+    qrActive:    Boolean(s.qrActive),
+    qrExpiresAt: Number(s.qrExpiresAt || 0),
+    qrToken:     String(s.qrToken || '')
+  };
+}
+
+// ── Session restore ───────────────────────────────────────
+(function init() {
+  var saved = localStorage.getItem('aiStampSession');
+  if (saved) {
+    try {
+      currentUser = normalizeUser(JSON.parse(saved));
+      bootUser();
+    } catch(e) { localStorage.removeItem('aiStampSession'); }
+  }
+})();
+
+// ── Auth ──────────────────────────────────────────────────
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(function(el, i) {
+    el.classList.toggle('active', ['login','signup'][i] === tab);
+  });
+  document.getElementById('form-login').style.display  = tab==='login'  ? 'block' : 'none';
+  document.getElementById('form-signup').style.display = tab==='signup' ? 'block' : 'none';
+}
+
+function showErr(id, msg) {
+  var el = document.getElementById(id);
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(function(){ el.style.display='none'; }, 5000);
+}
+
+async function handleLogin() {
+  busy('btn-login','Signing in…');
+  try {
+    var email    = document.getElementById('login-email').value.trim().toLowerCase();
+    var password = document.getElementById('login-password').value;
+    if (!email || !password) { showErr('login-error','Enter your email and password.'); return; }
+    var data = await apiRequest('login', { email: email, password: password });
+    finishAuth(data);
+  } catch(e) { showErr('login-error', e.message); }
+  finally { restore('btn-login'); }
+}
+
+async function handleSignUp() {
+  busy('btn-signup','Creating…');
+  try {
+    var name     = document.getElementById('su-name').value.trim();
+    var facility = document.getElementById('su-facility').value;
+    var email    = document.getElementById('su-email').value.trim().toLowerCase();
+    var password = document.getElementById('su-password').value;
+    if (!name)                         { showErr('signup-error','Please enter your full name.'); return; }
+    if (!facility)                     { showErr('signup-error','Please select your facility.'); return; }
+    if (!email || !email.includes('@')){ showErr('signup-error','Enter a valid email.'); return; }
+    if (password.length < 8)           { showErr('signup-error','Password must be at least 8 characters.'); return; }
+    var data = await apiRequest('signup', { name: name, facility: facility, email: email, password: password });
+    finishAuth(data);
+  } catch(e) { showErr('signup-error', e.message); }
+  finally { restore('btn-signup'); }
+}
+
+function finishAuth(data) {
+  currentUser = normalizeUser(data.user);
+  allSessions = (data.sessions || []).map(normalizeSession);
+  localStorage.setItem('aiStampSession', JSON.stringify(currentUser));
+  bootUser();
+}
+
+function logout() {
+  localStorage.removeItem('aiStampSession');
+  currentUser = null; allSessions = []; adminUsers = [];
+  Object.values(countdownTimers).forEach(clearInterval);
+  countdownTimers = {};
+  showScreen('auth');
+}
+
+async function bootUser() {
+  if (!currentUser) return;
+  if (currentUser.role === 'admin') {
+    try {
+      var data = await apiRequest('getAdminParticipants', { adminEmail: currentUser.email });
+      adminUsers  = (data.participants || []).map(normalizeUser);
+      allSessions = (data.sessions     || []).map(normalizeSession);
+    } catch(e) { console.error('bootUser admin error:', e); }
+    document.getElementById('a-logged-as').textContent = currentUser.name + ' · ' + currentUser.email;
+    renderAdmin();
+    showScreen('admin');
+  } else {
+    renderParticipant();
+    showScreen('participant');
+  }
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+// ── Participant render ────────────────────────────────────
+function renderParticipant() {
+  var u = currentUser;
+  document.getElementById('p-welcome').textContent  = 'Hello, ' + u.name.split(' ')[0] + ' 👋';
+  document.getElementById('p-facility').textContent = u.facility + ' · ' + u.email;
+  renderStamps();
+  renderSessions();
+}
+
+function renderStamps() {
+  var u    = currentUser;
+  var grid = document.getElementById('p-stamps');
+  grid.innerHTML = '';
+  for (var i = 1; i <= 10; i++) {
+    var filled = i <= u.stamps;
+    var div    = document.createElement('div');
+    var mc     = i===5 ? ' m5' : i===10 ? ' m10' : '';
+    div.className = 'stamp ' + (filled ? 'col' : 'unc') + mc;
+    var ts = (u.scanTimestamps && u.scanTimestamps[i]) ? u.scanTimestamps[i] : '';
+    var tsShort = ts ? ts.replace(/:\d{2}$/, '') : '';
+    div.innerHTML = '<span class="snum">' + i + '</span>' +
+      (filled && tsShort ? '<span class="stamp-ts">' + tsShort + '</span>' : '');
+    grid.appendChild(div);
+  }
+  document.getElementById('p-count').textContent = u.stamps;
+  document.getElementById('p-fill').style.width  = Math.min(100, u.stamps * 10) + '%';
+  document.getElementById('p-d5').className  = 'dot' + (u.stamps >= 5  ? ' rg' : '');
+  document.getElementById('p-d10').className = 'dot' + (u.stamps >= 10 ? ' rb' : '');
+
+  var ms5  = document.getElementById('p-ms5');
+  var ms10 = document.getElementById('p-ms10');
+  ms5.classList.remove('sbux-on','redeemed');
+  ms10.classList.remove('gadget-on','redeemed');
+  if (u.sbux)         { ms5.classList.add('redeemed'); document.getElementById('p-ms5-sub').textContent = 'Redeemed ✓'; }
+  else if (u.stamps>=5) { ms5.classList.add('sbux-on');  document.getElementById('p-ms5-sub').textContent = 'Unlocked!'; }
+  else                { document.getElementById('p-ms5-sub').textContent = 'Unlock at 5 stamps'; }
+  if (u.gadget)          { ms10.classList.add('redeemed');   document.getElementById('p-ms10-sub').textContent = 'Redeemed ✓'; }
+  else if (u.stamps>=10) { ms10.classList.add('gadget-on');  document.getElementById('p-ms10-sub').textContent = 'Unlocked!'; }
+  else                   { document.getElementById('p-ms10-sub').textContent = 'Unlock at 10 stamps'; }
+
+  document.getElementById('p-msg5').style.display  = (u.stamps>=5  && !u.sbux)   ? 'flex' : 'none';
+  document.getElementById('p-msg10').style.display = (u.stamps>=10 && !u.gadget) ? 'flex' : 'none';
+  document.getElementById('btn-open-scanner').disabled = u.stamps >= 10;
+
+  updateRewardQRCard('qr5-card',  'qr5-sub',  'qr5-svg',  3, u.stamps>=5,  u.sbux,  '5 stamps needed');
+  updateRewardQRCard('qr10-card', 'qr10-sub', 'qr10-svg', 7, u.stamps>=10, u.gadget,'10 stamps needed');
+}
+
+function updateRewardQRCard(cardId, subId, svgId, seed, eligible, redeemed, lockedMsg) {
+  var card = document.getElementById(cardId);
+  var sub  = document.getElementById(subId);
+  card.classList.remove('active-qr','locked','redeemed-qr');
+  if (redeemed) {
+    card.classList.add('redeemed-qr');
+    sub.innerHTML = '<span class="redeemed-tag"><i class="ti ti-check" style="font-size:10px;"></i> Redeemed</span>';
+  } else if (eligible) {
+    card.classList.add('active-qr');
+    sub.textContent = 'Show to facilitator';
+    drawSVGQR(svgId, seed);
+  } else {
+    card.classList.add('locked');
+    sub.textContent = lockedMsg;
+  }
+}
+
+function drawSVGQR(svgId, seed) {
+  var svg = document.getElementById(svgId);
+  if (!svg) return;
+  svg.innerHTML = '';
+  var G=7, CS=8, PAD=2, pat=[];
+  for (var r=0;r<G;r++) {
+    pat.push([]);
+    for (var c=0;c<G;c++) pat[r].push(((seed*31+r*17+c*7+r*c*seed)%3)===0?1:0);
+  }
+  [[0,0],[4,0],[0,4]].forEach(function(p){
+    for (var rr=0;rr<3;rr++) for(var cc=0;cc<3;cc++) pat[p[0]+rr][p[1]+cc]=(rr===1&&cc===1)?0:1;
+  });
+  for (var r2=0;r2<G;r2++) for(var c2=0;c2<G;c2++) {
+    if (!pat[r2][c2]) continue;
+    var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x', String(PAD+c2*CS)); rect.setAttribute('y', String(PAD+r2*CS));
+    rect.setAttribute('width',String(CS-1)); rect.setAttribute('height',String(CS-1));
+    rect.setAttribute('fill','white'); svg.appendChild(rect);
+  }
+}
+
+function renderSessions() {
+  var u    = currentUser;
+  var grid = document.getElementById('p-sessions');
+  grid.innerHTML = '';
+  allSessions.forEach(function(s) {
+    var claimed  = u.claimedSessions.indexOf(s.id) !== -1;
+    var status   = claimed ? 'col' : (s.qrActive ? 'avl' : 'upc');
+    var lbl      = claimed ? 'Collected' : (s.qrActive ? 'QR Active' : 'Upcoming');
+    var icon     = claimed ? 'ti-check'  : (s.qrActive ? 'ti-qrcode-scan' : 'ti-clock');
+    var ts       = u.scanTimestamps && u.scanTimestamps[s.id] ? u.scanTimestamps[s.id] : '';
+    var tsHtml   = ts ? '<div class="scan-ts"><i class="ti ti-clock-hour-4"></i>Scanned: ' + ts + '</div>' : '';
+    var card     = document.createElement('div');
+    card.className = 'sess-card';
+    card.innerHTML =
+      '<div class="sess-ic ' + status + '"><i class="ti ' + s.icon + '" style="font-size:17px;"></i></div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="stop"><span class="sname">' + s.name + '</span><span class="pb">1 pt</span></div>' +
+        '<div class="stype">' + s.type + '</div>' +
+        '<div class="sdesc">' + s.desc + '</div>' +
+        '<span class="spill ' + status + '"><i class="ti ' + icon + '" style="font-size:10px;"></i> ' + lbl + '</span>' +
+        tsHtml +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+// ── QR Scanner (camera) ───────────────────────────────────
+function openScanner() {
+  document.getElementById('scanner-overlay').classList.add('open');
+  document.getElementById('scan-result-card').style.display   = 'none';
+  document.getElementById('scanner-live-area').style.display  = 'block';
+  document.getElementById('scanner-status').textContent        = 'Initialising camera…';
+  document.getElementById('scanner-status').className          = 'scanner-status';
+  scanDone = false;
+  startCamera();
+}
+
+function closeScanner() {
+  document.getElementById('scanner-overlay').classList.remove('open');
+  stopCamera();
+}
+
+function startCamera() {
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then(function(stream) {
+      scanStream = stream;
+      var video  = document.getElementById('scanner-video');
+      video.srcObject = stream;
+      video.play();
+      document.getElementById('scanner-status').textContent = 'Align QR code inside the frame';
+      requestAnimationFrame(scanFrame);
+    })
+    .catch(function(err) {
+      document.getElementById('scanner-status').textContent = 'Camera error: ' + err.message;
+      document.getElementById('scanner-status').className   = 'scanner-status error';
+    });
+}
+
+function stopCamera() {
+  if (scanAnimFrame) { cancelAnimationFrame(scanAnimFrame); scanAnimFrame = null; }
+  if (scanStream)    { scanStream.getTracks().forEach(function(t){ t.stop(); }); scanStream = null; }
+  var video = document.getElementById('scanner-video');
+  if (video) { video.srcObject = null; }
+}
+
+function scanFrame() {
+  if (scanDone) return;
+  var video  = document.getElementById('scanner-video');
+  var canvas = document.getElementById('scanner-canvas');
+  if (!video || !canvas) return;
+  if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+    scanAnimFrame = requestAnimationFrame(scanFrame); return;
+  }
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  var code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+  if (code && code.data) {
+    scanDone = true;
+    stopCamera();
+    submitQRToken(code.data);
+  } else {
+    scanAnimFrame = requestAnimationFrame(scanFrame);
+  }
+}
+
+async function submitQRToken(token) {
+  document.getElementById('scanner-status').textContent = 'Verifying…';
+  try {
+    var data = await apiRequest('scanQR', {
+      userId:   currentUser.id,
+      email:    currentUser.email,
+      qrToken:  token
+    });
+    currentUser = normalizeUser(data.user);
+    if (data.sessions) allSessions = data.sessions.map(normalizeSession);
+    localStorage.setItem('aiStampSession', JSON.stringify(currentUser));
+
+    // Show success card
+    document.getElementById('scanner-live-area').style.display = 'none';
+    var rc = document.getElementById('scan-result-card');
+    rc.className = 'scan-result-card';
+    rc.style.display = 'block';
+    document.getElementById('scan-result-icon').textContent    = '✅';
+    document.getElementById('scan-result-title').textContent   = 'Stamp collected!';
+    document.getElementById('scan-result-body').textContent    =
+      data.sessionName + '\nScanned at: ' + (data.scannedAt || '');
+
+    renderParticipant();
+
+    // Auto-close after 3 s
+    setTimeout(function(){ closeScanner(); }, 3000);
+  } catch(e) {
+    document.getElementById('scanner-live-area').style.display = 'none';
+    var rc = document.getElementById('scan-result-card');
+    rc.className = 'scan-result-card error-card';
+    rc.style.display = 'block';
+    document.getElementById('scan-result-icon').textContent  = '❌';
+    document.getElementById('scan-result-title').textContent = 'Could not claim stamp';
+    document.getElementById('scan-result-body').textContent  = e.message;
+    // Re-enable scanning after 3 s
+    setTimeout(function(){
+      rc.style.display = 'none';
+      document.getElementById('scanner-live-area').style.display = 'block';
+      scanDone = false;
+      startCamera();
+    }, 3000);
+  }
+}
+
+// ── Admin render ──────────────────────────────────────────
+function renderAdmin() {
+  renderQRManagement();
+  renderAdminParticipants();
+}
+
+function renderQRManagement() {
+  var list = document.getElementById('qr-mgmt-list');
+  list.innerHTML = '';
+  // Stop old countdown timers
+  Object.keys(countdownTimers).forEach(function(k){ clearInterval(countdownTimers[k]); });
+  countdownTimers = {};
+
+  allSessions.forEach(function(s) {
+    var card = document.createElement('div');
+    card.className  = 'qr-mgmt-card';
+    card.id         = 'qr-card-' + s.id;
+
+    var isActive  = s.qrActive && s.qrExpiresAt > Date.now();
+    var isExpired = s.qrActive && s.qrExpiresAt <= Date.now() && s.qrExpiresAt > 0;
+
+    var statusPill = isActive
+      ? '<span class="qr-status-pill active"><i class="ti ti-check" style="font-size:10px;"></i> Active</span>'
+      : (isExpired
+        ? '<span class="qr-status-pill expired"><i class="ti ti-clock" style="font-size:10px;"></i> Expired</span>'
+        : '<span class="qr-status-pill inactive">Inactive</span>');
+
+    var claimCount = adminUsers.filter(function(u){
+      return u.claimedSessions.indexOf(s.id) !== -1;
+    }).length;
+
+    var qrHtml = '';
+    if (isActive && s.qrToken) {
+      qrHtml = '<div class="qr-display-box" id="qr-img-' + s.id + '"></div>';
+    } else {
+      qrHtml = '<div class="qr-display-box" style="color:var(--ts);font-size:11px;text-align:center;padding:8px;">' +
+               (isExpired ? '⏰ Expired' : 'No QR active') + '</div>';
+    }
+
+    var countdownHtml = isActive
+      ? '<div class="countdown" id="cd-' + s.id + '"><i class="ti ti-clock"></i> <span></span></div>'
+      : '';
+
+    var deactivateHtml = (isActive || isExpired)
+      ? '<button class="btn-deactivate" onclick="deactivateQR(' + s.id + ')"><i class="ti ti-player-stop"></i> Deactivate</button>'
+      : '';
+
+    card.innerHTML =
+      '<div class="qr-mgmt-top">' +
+        '<div><div class="qr-mgmt-name">' + s.name + '</div>' +
+        '<div class="qr-mgmt-meta">' + s.type + ' · ' +
+          '<span class="scan-count-badge"><i class="ti ti-users" style="font-size:10px;"></i>' + claimCount + ' scanned</span>' +
+        '</div></div>' +
+        statusPill +
+      '</div>' +
+      '<div class="qr-mgmt-body">' +
+        qrHtml +
+        '<div class="qr-controls">' +
+          '<div class="duration-row">' +
+            '<select class="duration-select" id="dur-' + s.id + '">' +
+              '<option value="5">5 minutes</option>' +
+              '<option value="10">10 minutes</option>' +
+              '<option value="15" selected>15 minutes</option>' +
+              '<option value="30">30 minutes</option>' +
+              '<option value="60">1 hour</option>' +
+              '<option value="120">2 hours</option>' +
+            '</select>' +
+            '<button class="btn-activate" id="btn-act-' + s.id + '" onclick="activateQR(' + s.id + ')">' +
+              '<i class="ti ti-qrcode"></i> ' + (isActive ? 'Refresh' : 'Activate') +
+            '</button>' +
+          '</div>' +
+          countdownHtml +
+          deactivateHtml +
+        '</div>' +
+      '</div>';
+    list.appendChild(card);
+
+    if (isActive && s.qrToken) {
+      try {
+        new QRCode(document.getElementById('qr-img-' + s.id), {
+          text: s.qrToken, width: 90, height: 90,
+          colorDark: '#2C1F14', colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch(e) { console.warn('QR render failed', e); }
+    }
+
+    if (isActive) startCountdown(s.id, s.qrExpiresAt);
+  });
+}
+
+function startCountdown(sessionId, expiresAtMs) {
+  var el = document.getElementById('cd-' + sessionId);
+  if (!el) return;
+  function tick() {
+    var el2 = document.getElementById('cd-' + sessionId);
+    if (!el2) { clearInterval(countdownTimers[sessionId]); return; }
+    var remaining = Math.max(0, Math.floor((expiresAtMs - Date.now()) / 1000));
+    var m = Math.floor(remaining / 60);
+    var s = remaining % 60;
+    el2.querySelector('span').textContent = 'Expires in ' + m + ':' + (s < 10 ? '0' : '') + s;
+    el2.className = 'countdown' + (remaining < 60 ? ' expired' : '');
+    if (remaining === 0) {
+      clearInterval(countdownTimers[sessionId]);
+      setTimeout(function(){ refreshAdminData(); }, 1000);
+    }
+  }
+  tick();
+  countdownTimers[sessionId] = setInterval(tick, 1000);
+}
+
+async function activateQR(sessionId) {
+  var btnId  = 'btn-act-' + sessionId;
+  var durSel = document.getElementById('dur-' + sessionId);
+  var dur    = durSel ? Number(durSel.value) : 15;
+  busy(btnId, 'Generating…');
+  try {
+    var data = await apiRequest('generateQRToken', {
+      adminEmail:       currentUser.email,
+      sessionId:        sessionId,
+      durationMinutes:  dur
+    });
+    var idx = allSessions.findIndex(function(s){ return s.id === sessionId; });
+    if (idx !== -1) {
+      allSessions[idx].qrActive    = true;
+      allSessions[idx].qrExpiresAt = data.expiresAtMs;
+      allSessions[idx].qrToken     = data.token;
+    }
+    renderQRManagement();
+  } catch(e) { alert('Error: ' + e.message); }
+  finally { restore(btnId); }
+}
+
+async function deactivateQR(sessionId) {
+  try {
+    await apiRequest('deactivateQR', { adminEmail: currentUser.email, sessionId: sessionId });
+    var idx = allSessions.findIndex(function(s){ return s.id === sessionId; });
+    if (idx !== -1) {
+      allSessions[idx].qrActive    = false;
+      allSessions[idx].qrExpiresAt = 0;
+      allSessions[idx].qrToken     = '';
+    }
+    renderQRManagement();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function refreshAdminData() {
+  try {
+    var data = await apiRequest('getAdminParticipants', { adminEmail: currentUser.email });
+    adminUsers  = (data.participants || []).map(normalizeUser);
+    allSessions = (data.sessions     || []).map(normalizeSession);
+    renderAdmin();
+  } catch(e) { console.error('refreshAdminData:', e); }
+}
+
+function renderAdminParticipants() {
+  var query    = (document.getElementById('a-search').value || '').toLowerCase();
+  var parts    = adminUsers.filter(function(u){ return u.role === 'participant'; });
+  var eligible = parts.filter(function(p){ return (p.stamps>=5&&!p.sbux)||(p.stamps>=10&&!p.gadget); });
+  var redeemed = parts.filter(function(p){ return p.sbux||p.gadget; });
+  var notYet   = parts.filter(function(p){ return p.stamps < 5; });
+  document.getElementById('a-total').textContent    = parts.length;
+  document.getElementById('a-eligible').textContent = eligible.length;
+  document.getElementById('a-redeemed').textContent = redeemed.length;
+  document.getElementById('a-pending').textContent  = notYet.length;
+
+  var filtered = parts;
+  if (activeFilter==='eligible') filtered = filtered.filter(function(p){ return (p.stamps>=5&&!p.sbux)||(p.stamps>=10&&!p.gadget); });
+  if (activeFilter==='sbux')     filtered = filtered.filter(function(p){ return p.sbux&&!p.gadget; });
+  if (activeFilter==='both')     filtered = filtered.filter(function(p){ return p.sbux&&p.gadget; });
+  if (query) filtered = filtered.filter(function(p){
+    return p.name.toLowerCase().indexOf(query)!==-1 || p.email.toLowerCase().indexOf(query)!==-1;
+  });
+
+  var tbl = document.getElementById('a-table');
+  tbl.innerHTML = '';
+  if (!filtered.length) {
+    tbl.innerHTML = '<div class="no-results"><i class="ti ti-search-off"></i>No participants found.</div>';
+    return;
+  }
+
+  filtered.forEach(function(p) {
+    var card = document.createElement('div');
+    card.className = 'a-card';
+
+    var historyRows = '';
+    if (p.claimedSessions.length > 0) {
+      historyRows = '<div class="stamp-history"><div class="stamp-history-title">Scan history</div><div class="stamp-history-rows">';
+      p.claimedSessions.forEach(function(sid) {
+        var sess = allSessions.find(function(s){ return s.id === sid; });
+        var sname = sess ? sess.name : 'Session ' + sid;
+        var ts = (p.scanTimestamps && p.scanTimestamps[sid]) ? p.scanTimestamps[sid] : '—';
+        historyRows +=
+          '<div class="shrow">' +
+            '<span class="shrow-name">' + sname + '</span>' +
+            '<span class="shrow-ts"><i class="ti ti-clock-hour-4"></i>' + ts + '</span>' +
+          '</div>';
+      });
+      historyRows += '</div></div>';
+    }
+
+    card.innerHTML =
+      '<div class="a-card-top">' +
+        '<div class="avatar">' + p.initials + '</div>' +
+        '<div><div class="a-pname">' + p.name + '</div>' +
+        '<div class="a-pmeta">' + p.facility + ' · ' + p.email + '</div></div>' +
+      '</div>' +
+      '<div class="a-stamp-bar">' +
+        '<div class="a-stamp-label"><span class="a-stamp-lbl">Stamps collected</span><span class="a-stamp-val">' + p.stamps + ' / 10</span></div>' +
+        '<div class="mini-bar"><div class="mini-fill" style="width:' + (p.stamps*10) + '%;"></div></div>' +
+      '</div>' +
+      historyRows +
+      '<div class="reward-rows">' + rewardBlock(p,'sbux') + rewardBlock(p,'gadget') + '</div>';
+    tbl.appendChild(card);
+  });
+}
+
+function rewardBlock(p, type) {
+  var isSbux  = type==='sbux';
+  var label   = isSbux ? 'Starbucks card' : 'Free gadget';
+  var sub     = isSbux ? 'Eligible at 5 stamps' : 'Eligible at 10 stamps';
+  var cls     = isSbux ? 'ri-s' : 'ri-g';
+  var elig    = isSbux ? p.stamps>=5 : p.stamps>=10;
+  var done    = isSbux ? p.sbux : p.gadget;
+  var date    = isSbux ? p.sbuxDate : p.gadgetDate;
+  var icon    = isSbux
+    ? '<svg width="14" height="14" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="10" r="5" fill="white" opacity=".9"/><path d="M9 15 Q13 20 17 15" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>'
+    : '<svg width="14" height="14" viewBox="0 0 26 26" fill="none"><rect x="6" y="4" width="14" height="18" rx="2.5" fill="white" opacity=".15"/><rect x="8" y="6" width="10" height="11" rx="1.5" fill="white" opacity=".9"/></svg>';
+  var right = done
+    ? '<div style="text-align:right;"><span class="rbadge done"><i class="ti ti-check" style="font-size:10px;"></i> Redeemed</span>' +
+      (date ? '<div class="redeemed-date">' + date + '</div>' : '') + '</div>'
+    : (elig
+      ? '<button class="btn-mark" onclick="markRedeemed(\'' + p.id + '\',\'' + type + '\')">Mark redeemed</button>'
+      : '<span class="rbadge locked">Locked</span>');
+  return '<div class="rrow"><div class="rleft"><div class="ricon ' + cls + '">' + icon + '</div>' +
+    '<div><div class="rname">' + label + '</div><div class="rsub">' + sub + '</div></div></div>' + right + '</div>';
+}
+
+async function markRedeemed(userId, type) {
+  try {
+    var data = await apiRequest('markRedeemed', {
+      adminEmail: currentUser.email, adminId: currentUser.id,
+      userId: userId, rewardType: type
+    });
+    adminUsers  = (data.participants || []).map(normalizeUser);
+    allSessions = (data.sessions     || []).map(normalizeSession);
+    renderAdmin();
+  } catch(e) { alert(e.message); }
+}
+
+function setFilter(btn, filter) {
+  document.querySelectorAll('.fbtn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  activeFilter = filter;
+  renderAdminParticipants();
+}
+</script>
 </body>
 </html>
