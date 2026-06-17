@@ -1000,14 +1000,13 @@ function renderQRManagement() {
     card.className  = 'qr-mgmt-card';
     card.id         = 'qr-card-' + s.id;
 
-    var isActive  = s.qrActive && s.qrExpiresAt > Date.now();
-    var isExpired = s.qrActive && s.qrExpiresAt <= Date.now() && s.qrExpiresAt > 0;
+    // Expired QR codes are treated as inactive in the UI.
+    // The backend still rejects expired tokens, so no manual Deactivate button is needed.
+    var isActive = s.qrActive && s.qrExpiresAt > Date.now();
 
     var statusPill = isActive
       ? '<span class="qr-status-pill active"><i class="ti ti-check" style="font-size:10px;"></i> Active</span>'
-      : (isExpired
-        ? '<span class="qr-status-pill expired"><i class="ti ti-clock" style="font-size:10px;"></i> Expired</span>'
-        : '<span class="qr-status-pill inactive">Inactive</span>');
+      : '<span class="qr-status-pill inactive">Inactive</span>';
 
     var claimCount = adminUsers.filter(function(u){
       return u.claimedSessions.indexOf(s.id) !== -1;
@@ -1024,17 +1023,13 @@ function renderQRManagement() {
     } else {
       qrHtml = '<div class="qr-display-wrap">' +
                  '<div class="qr-display-box" style="color:var(--ts);font-size:11px;text-align:center;padding:8px;">' +
-                   (isExpired ? '⏰ Expired' : 'No QR active') +
+                   'No QR active' +
                  '</div>' +
                '</div>';
     }
 
     var countdownHtml = isActive
       ? '<div class="countdown" id="cd-' + s.id + '"><i class="ti ti-clock"></i> <span></span></div>'
-      : '';
-
-    var deactivateHtml = (isActive || isExpired)
-      ? '<button class="btn-deactivate" onclick="deactivateQR(' + s.id + ')"><i class="ti ti-player-stop"></i> Deactivate</button>'
       : '';
 
     card.innerHTML =
@@ -1065,7 +1060,6 @@ function renderQRManagement() {
           '<button class="btn-download-history" onclick="downloadSessionScanHistory(' + s.id + ')">' +
             '<i class="ti ti-table-export"></i> Download scan history' +
           '</button>' +
-          deactivateHtml +
         '</div>' +
       '</div>';
     list.appendChild(card);
