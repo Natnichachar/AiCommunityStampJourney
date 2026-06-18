@@ -245,6 +245,23 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .btn-download-history{width:100%;padding:9px 12px;background:#fff;color:var(--green-d);border:1.5px solid var(--green);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;white-space:nowrap;}
 .btn-download-history:hover{background:var(--green-l);}
 
+/* Minimal selected-session controls */
+.selected-session-mini{font-size:11px;color:var(--ts);line-height:1.45;padding:1px 0 2px;}
+.selected-session-mini strong{font-size:12px;color:var(--tm);font-weight:700;}
+.qr-primary-row{display:grid;grid-template-columns:minmax(108px,.75fr) minmax(0,1fr);gap:8px;align-items:center;}
+.qr-primary-row .duration-select,.qr-primary-row .btn-activate{height:38px;}
+.qr-action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;}
+.btn-action-outline{height:38px;padding:0 11px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s;white-space:nowrap;}
+.btn-action-outline:hover{background:var(--cream-d);}
+.btn-action-outline.danger{color:var(--red);border-color:#F3B6B6;}
+.btn-action-outline.danger:hover{background:var(--red-l);}
+.selected-session-edit-slot{margin-top:10px;}
+.selected-session-edit-slot:empty{display:none;}
+.selected-session-edit-slot .sess-edit-form{margin-top:0;}
+.data-panel{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;}
+.data-panel-row{display:grid;grid-template-columns:1fr;gap:9px;}
+@media(max-width:380px){.qr-primary-row{grid-template-columns:1fr;}.qr-action-row{grid-template-columns:1fr 1fr;}}
+
 /* SESSION LIST MANAGEMENT (admin) */
 .sess-mgmt-list{display:grid;gap:10px;margin-top:12px;}
 .sess-mgmt-card{background:#fff;border-radius:var(--r-md);border:.5px solid #E8DDD4;padding:14px 16px;box-shadow:var(--shadow);}
@@ -479,18 +496,21 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
                 <span class="qr-status-pill inactive" id="qr-panel-status">Inactive</span>
                 <span class="scan-count-badge" id="qr-panel-count"><i class="ti ti-users" style="font-size:10px;"></i> 0 scanned</span>
               </div>
-              <select class="duration-select" id="qr-panel-dur">
-                <option value="5">5 minutes</option><option value="10">10 minutes</option>
-                <option value="15" selected>15 minutes</option><option value="30">30 minutes</option>
-                <option value="60">1 hour</option><option value="120">2 hours</option>
-              </select>
-              <button class="btn-activate" id="btn-panel-activate" onclick="activatePanelQR()"><i class="ti ti-qrcode"></i> Activate QR</button>
+              <div class="selected-session-mini" id="selected-session-mini"></div>
+              <div class="qr-primary-row">
+                <select class="duration-select" id="qr-panel-dur">
+                  <option value="5">5 minutes</option><option value="10">10 minutes</option>
+                  <option value="15" selected>15 minutes</option><option value="30">30 minutes</option>
+                  <option value="60">1 hour</option><option value="120">2 hours</option>
+                </select>
+                <button class="btn-activate" id="btn-panel-activate" onclick="activatePanelQR()"><i class="ti ti-qrcode"></i> Activate QR</button>
+              </div>
+              <div class="qr-action-row" id="selected-session-actions"></div>
               <div class="countdown" id="qr-panel-countdown" style="display:none;"><i class="ti ti-clock"></i> <span></span></div>
-              <button class="btn-download-history" id="btn-panel-history" onclick="downloadPanelHistory()"><i class="ti ti-table-export"></i> Download scan history</button>
             </div>
           </div>
 
-          <div class="sess-mgmt-card" id="selected-session-card" style="margin-top:12px;"></div>
+          <div class="selected-session-edit-slot" id="selected-session-card"></div>
         </div>
       </div>
 
@@ -511,8 +531,19 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
           <button class="btn-cancel-new" onclick="toggleNewSessionForm(false)">Cancel</button>
         </div>
       </div>
+    </div>
 
-      <button class="btn-download-history" onclick="downloadAllSessionScanHistory()" style="margin-top:10px;"><i class="ti ti-table-export"></i> Download all scan history</button>
+    <!-- Data Collections -->
+    <div class="section mt-16">
+      <div class="slabel">Data collections</div>
+      <div class="data-panel">
+        <div class="data-panel-row">
+          <select class="qr-session-select" id="data-session-select">
+            <option value="all">All sessions</option>
+          </select>
+          <button class="btn-download-history" id="btn-data-download" onclick="downloadSelectedScanHistory()"><i class="ti ti-table-export"></i> Download scan history</button>
+        </div>
+      </div>
     </div>
 
     <!-- Participants -->
@@ -882,7 +913,7 @@ async function submitQRToken(token){
 }
 
 // ══ ADMIN ══
-function renderAdmin(){ populateQRSessionSelect(); renderQRPanel(); renderAdminParticipants(); }
+function renderAdmin(){ populateQRSessionSelect(); populateDataSessionSelect(); renderQRPanel(); renderAdminParticipants(); }
 
 // Populate the session dropdown
 function populateQRSessionSelect(){
@@ -895,6 +926,19 @@ function populateQRSessionSelect(){
     sel.appendChild(opt);
   });
   if(current) sel.value=current;
+}
+
+function populateDataSessionSelect(){
+  var sel=document.getElementById('data-session-select');
+  if(!sel) return;
+  var current=sel.value||'all';
+  sel.innerHTML='<option value="all">All sessions</option>';
+  allSessions.forEach(function(s){
+    var opt=document.createElement('option');
+    opt.value=s.id; opt.textContent=s.name+(s.location?' · '+s.location:'');
+    sel.appendChild(opt);
+  });
+  sel.value=Array.prototype.some.call(sel.options,function(o){ return o.value===current; })?current:'all';
 }
 
 // Render the QR panel for the selected session
@@ -998,45 +1042,49 @@ function downloadPanelHistory(){
 
 // Selected session management (admin)
 function renderSelectedSessionMgmt(s){
-  var card=document.getElementById('selected-session-card');
-  if(!card) return;
-  if(!s){ card.innerHTML=''; return; }
+  var actions=document.getElementById('selected-session-actions');
+  var slot=document.getElementById('selected-session-card');
+  var mini=document.getElementById('selected-session-mini');
+  if(!actions || !slot) return;
+  if(!s){
+    actions.innerHTML='';
+    slot.innerHTML='';
+    if(mini) mini.innerHTML='';
+    return;
+  }
+
+  if(mini){
+    mini.innerHTML='<strong>'+htmlAttr(s.name)+'</strong>'+(s.type?' · '+htmlAttr(s.type):'')+(s.location?' · '+htmlAttr(s.location):'');
+  }
+
+  var safeName=String(s.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  actions.innerHTML=
+    '<button class="btn-action-outline" title="Edit selected session" onclick="toggleEditForm('+s.id+')"><i class="ti ti-pencil"></i> Edit</button>'+ 
+    '<button class="btn-action-outline danger" title="Delete selected session" onclick="deleteSession('+s.id+',\''+safeName+'\')"><i class="ti ti-trash"></i> Delete</button>';
 
   var typeOpts=['Sharing','Workshop','Sharing & Workshop'].map(function(t){
     return '<option value="'+htmlAttr(t)+'"'+(t===s.type?' selected':'')+'>'+t+'</option>';
   }).join('');
   var locOpts=buildLocationOptions(s.location);
-  var editForm=
+  slot.innerHTML=
     '<div class="sess-edit-form" id="edit-form-'+s.id+'">'+
-      '<div><label class="form-label" style="font-size:10px;">Session Name</label>'+
-      '<input class="edit-form-input" id="ef-name-'+s.id+'" value="'+htmlAttr(s.name)+'" placeholder="Session name"></div>'+
-      '<div class="edit-form-row">'+
-        '<div><label class="form-label" style="font-size:10px;">Type</label>'+
-        '<select class="edit-form-select" id="ef-type-'+s.id+'">'+typeOpts+'</select></div>'+
-        '<div><label class="form-label" style="font-size:10px;">Time</label>'+
-        '<input class="edit-form-input" id="ef-time-'+s.id+'" value="'+htmlAttr(s.time)+'" placeholder="09:00–10:00"></div>'+
-      '</div>'+
-      '<div><label class="form-label" style="font-size:10px;">Location</label>'+
-      '<select class="edit-form-select" id="ef-loc-'+s.id+'">'+locOpts+'</select></div>'+
-      '<div><label class="form-label" style="font-size:10px;">Description</label>'+
-      '<input class="edit-form-input" id="ef-desc-'+s.id+'" value="'+htmlAttr(s.desc)+'" placeholder="Description"></div>'+
-      '<div class="edit-form-actions">'+
-        '<button class="btn-save" id="btn-save-'+s.id+'" onclick="saveSession('+s.id+')"><i class="ti ti-check"></i> Save Changes</button>'+
-        '<button class="btn-cancel-edit" onclick="toggleEditForm('+s.id+')">Cancel</button>'+
-      '</div>'+
+      '<div><label class="form-label" style="font-size:10px;">Session Name</label>'+ 
+      '<input class="edit-form-input" id="ef-name-'+s.id+'" value="'+htmlAttr(s.name)+'" placeholder="Session name"></div>'+ 
+      '<div class="edit-form-row">'+ 
+        '<div><label class="form-label" style="font-size:10px;">Type</label>'+ 
+        '<select class="edit-form-select" id="ef-type-'+s.id+'">'+typeOpts+'</select></div>'+ 
+        '<div><label class="form-label" style="font-size:10px;">Time</label>'+ 
+        '<input class="edit-form-input" id="ef-time-'+s.id+'" value="'+htmlAttr(s.time)+'" placeholder="09:00–10:00"></div>'+ 
+      '</div>'+ 
+      '<div><label class="form-label" style="font-size:10px;">Location</label>'+ 
+      '<select class="edit-form-select" id="ef-loc-'+s.id+'">'+locOpts+'</select></div>'+ 
+      '<div><label class="form-label" style="font-size:10px;">Description</label>'+ 
+      '<input class="edit-form-input" id="ef-desc-'+s.id+'" value="'+htmlAttr(s.desc)+'" placeholder="Description"></div>'+ 
+      '<div class="edit-form-actions">'+ 
+        '<button class="btn-save" id="btn-save-'+s.id+'" onclick="saveSession('+s.id+')"><i class="ti ti-check"></i> Save Changes</button>'+ 
+        '<button class="btn-cancel-edit" onclick="toggleEditForm('+s.id+')">Cancel</button>'+ 
+      '</div>'+ 
     '</div>';
-
-  card.innerHTML=
-    '<div class="sess-mgmt-top">'+
-      '<div>'+
-        '<div class="sess-mgmt-name"><i class="ti '+htmlAttr(s.icon)+'" style="font-size:12px;margin-right:4px;color:var(--terra);"></i>'+htmlAttr(s.name)+'</div>'+
-        '<div class="sess-mgmt-meta">'+htmlAttr(s.type)+(s.time?' · '+htmlAttr(s.time):'')+(s.location?' · '+htmlAttr(s.location):'')+'</div>'+
-      '</div>'+
-      '<div style="display:flex;gap:6px;">'+
-        '<button class="btn-icon" title="Edit" onclick="toggleEditForm('+s.id+')"><i class="ti ti-pencil"></i></button>'+
-        '<button class="btn-icon danger" title="Delete" onclick="deleteSelectedSession()"><i class="ti ti-trash"></i></button>'+
-      '</div>'+
-    '</div>'+editForm;
 }
 
 function toggleNewSessionForm(open){
@@ -1094,14 +1142,6 @@ async function saveSession(sid){
     renderAdmin();
   }catch(e){ alert('Error: '+e.message); }
   finally{ restore(btnId); }
-}
-
-function deleteSelectedSession(){
-  var sid=Number(document.getElementById('qr-session-select').value);
-  if(!sid){ alert('Please select a session first.'); return; }
-  var s=allSessions.find(function(x){ return x.id===sid; });
-  if(!s){ alert('Session not found.'); return; }
-  deleteSession(sid,s.name);
 }
 
 async function deleteSession(sid,name){
@@ -1203,6 +1243,12 @@ function downloadCsv(filename,rows){
   var url=URL.createObjectURL(blob), link=document.createElement('a');
   link.href=url; link.download=filename;
   document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+}
+function downloadSelectedScanHistory(){
+  var sel=document.getElementById('data-session-select');
+  var value=sel?sel.value:'all';
+  if(value==='all') downloadAllSessionScanHistory();
+  else downloadSessionScanHistory(Number(value));
 }
 function downloadSessionScanHistory(sessionId){
   var session=allSessions.find(function(s){ return Number(s.id)===Number(sessionId); });
