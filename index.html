@@ -51,8 +51,6 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .btn-primary{width:100%;padding:16px;background:var(--terra);color:#fff;border:none;border-radius:var(--r-md);font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:opacity .2s;}
 .btn-primary:hover{opacity:.9;}
 .btn-primary:disabled{opacity:.45;cursor:not-allowed;}
-.auth-note{background:var(--terra-p);border-radius:var(--r-md);padding:12px 16px;font-size:12px;color:#7A2E0A;line-height:1.7;margin-top:16px;}
-.auth-note strong{font-weight:700;}
 .error-msg{background:var(--red-l);border:1px solid #FCA5A5;border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px;display:none;}
 
 /* PARTICIPANT HEADER */
@@ -70,41 +68,6 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .section{padding:20px 16px 0;}
 .slabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ts);margin-bottom:12px;}
 .card{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:18px;box-shadow:var(--shadow);}
-
-/* REWARD CAROUSEL */
-.reward-carousel{margin-bottom:18px;border:1.5px solid #E8DDD4;border-radius:var(--r-lg);padding:14px;background:#fff;}
-.reward-carousel-stage{position:relative;}
-.reward-slide{display:none;}
-.reward-slide.active{display:block;}
-.reward-visual{height:180px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:14px;border:1px solid rgba(255,255,255,.5);}
-.reward-visual.sbux{background:linear-gradient(135deg,#EAF7F0 0%,#D8EEE3 100%);}
-.reward-visual.gadget{background:linear-gradient(135deg,#EAF3FF 0%,#D9E6FA 100%);}
-.reward-glow{position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.55);filter:blur(10px);}
-.reward-photo{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;}
-.reward-photo-card{width:210px;height:128px;border-radius:18px;background:linear-gradient(135deg,#006241 0%,#1F8C63 100%);box-shadow:0 16px 30px rgba(0,112,74,.22);padding:18px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;transform:rotate(-7deg);}
-.reward-photo-card-top{display:flex;justify-content:space-between;align-items:flex-start;}
-.reward-photo-card-chip{width:26px;height:20px;border-radius:6px;background:rgba(255,255,255,.35);}
-.reward-photo-card-brand{font-size:12px;font-weight:700;letter-spacing:.4px;opacity:.95;}
-.reward-photo-card-bottom{font-size:20px;font-weight:700;line-height:1.15;max-width:135px;}
-.reward-photo-gadget{width:120px;height:148px;border-radius:26px;background:linear-gradient(160deg,#274677 0%,#162B4C 100%);box-shadow:0 16px 30px rgba(26,58,92,.28);padding:10px;position:relative;}
-.reward-photo-screen{width:100%;height:100%;border-radius:20px;background:linear-gradient(180deg,#F8FBFF 0%,#D9E8FF 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-.reward-photo-screen::before{content:'';position:absolute;inset:18px 24px auto 24px;height:10px;border-radius:99px;background:rgba(45,110,196,.18);}
-.reward-photo-screen::after{content:'';position:absolute;left:24px;right:24px;bottom:22px;height:34px;border-radius:14px;background:rgba(45,110,196,.12);}
-.reward-photo-icon{position:relative;z-index:1;width:52px;height:52px;border-radius:16px;background:#2D6EC4;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(45,110,196,.25);}
-.reward-photo-icon i{font-size:28px;color:#fff;}
-.reward-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.reward-text h4{font-size:17px;font-weight:700;color:var(--tm);margin-bottom:4px;}
-.reward-text p{font-size:13px;line-height:1.45;color:var(--ts);}
-.reward-state{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap;}
-.reward-state.locked{background:var(--cream-d);color:var(--ts);}
-.reward-state.unlocked{background:var(--green-l);color:var(--green-d);}
-.reward-state.redeemed{background:#F5F2EE;color:#8B8276;}
-.reward-carousel-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;}
-.reward-nav-btn{width:34px;height:34px;border:none;border-radius:50%;background:var(--terra-p);color:var(--terra);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:opacity .2s, transform .2s;}
-.reward-nav-btn:hover{opacity:.9;transform:translateY(-1px);}
-.reward-carousel-dots{display:flex;align-items:center;justify-content:center;gap:8px;flex:1;}
-.reward-dot-btn{width:8px;height:8px;border:none;border-radius:50%;background:#D9D1C8;cursor:pointer;transition:all .2s;}
-.reward-dot-btn.active{width:22px;border-radius:99px;background:var(--terra);}
 
 /* TRACK */
 .track{margin-bottom:20px;}
@@ -141,8 +104,12 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .qr-card.active-qr{border-color:var(--terra);background:var(--terra-p);}
 .qr-card.locked{opacity:.4;}
 .qr-card.redeemed-qr{border-color:#999;background:#F5F2EE;}
-.qr-box{width:76px;height:76px;border-radius:12px;background:var(--tm);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;}
-.qr-card.redeemed-qr .qr-box{background:#999;}
+/* QR box: white background, full opacity content */
+.qr-box{width:76px;height:76px;border-radius:12px;background:#fff;border:1.5px solid var(--cream-d);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.qr-card.active-qr .qr-box{border-color:var(--terra-l);background:#fff;}
+.qr-card.redeemed-qr .qr-box{background:#F0EDEA;border-color:#ccc;}
+/* Inner QR SVG full opacity */
+.qr-box svg{opacity:1;}
 .qr-lbl{font-size:12px;font-weight:700;color:var(--tm);margin-bottom:3px;}
 .qr-sub{font-size:11px;color:var(--ts);}
 .qr-card.redeemed-qr .qr-lbl,.qr-card.redeemed-qr .qr-sub{color:#999;}
@@ -170,15 +137,21 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .scan-ts{font-size:11px;color:var(--ts);margin-top:5px;display:flex;align-items:center;gap:4px;}
 .scan-ts i{font-size:12px;color:var(--terra-l);}
 
-/* Next sessions button */
-.btn-next-sessions{width:100%;padding:11px;background:#fff;color:var(--terra);border:1.5px solid var(--terra-l);border-radius:var(--r-md);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px;transition:background .2s;}
-.btn-next-sessions:hover{background:var(--terra-p);}
+/* Session pagination — prev/next plain arrows */
+.sess-pager{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px;}
+.sess-pager-info{font-size:12px;color:var(--ts);font-weight:600;text-align:center;flex:1;}
+.btn-pager{width:36px;height:36px;border:1.5px solid var(--cream-d);border-radius:50%;background:#fff;color:var(--ts);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:.2s;flex-shrink:0;}
+.btn-pager:hover:not(:disabled){background:var(--cream-d);color:var(--tm);}
+.btn-pager:disabled{opacity:.3;cursor:not-allowed;}
 
 /* ACTIONS */
 .p-actions{padding:20px 16px 0;display:flex;flex-direction:column;gap:10px;}
-.btn-scan{background:var(--terra);color:#fff;border:none;border-radius:var(--r-md);padding:16px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;width:100%;font-family:var(--font);transition:opacity .2s;}
-.btn-scan:hover{opacity:.9;}
-.btn-scan:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Minimal scan button */
+.btn-scan{background:transparent;color:var(--terra);border:1.5px solid var(--terra);border-radius:var(--r-md);padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font-family:var(--font);transition:background .2s,color .2s;}
+.btn-scan:hover{background:var(--terra-p);}
+.btn-scan:disabled{opacity:.35;cursor:not-allowed;}
+
 .feedback-card{background:#fff;border-radius:var(--r-md);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);}
 .feedback-card h4{font-size:13px;font-weight:700;color:var(--tm);margin-bottom:5px;}
 .feedback-card p{font-size:12px;color:var(--ts);margin-bottom:13px;}
@@ -222,7 +195,7 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .stat-num.green{color:var(--green);}
 .stat-lbl{font-size:11px;color:var(--ts);font-weight:600;margin-top:3px;}
 
-/* QR PANEL — dropdown selector layout */
+/* QR PANEL */
 .qr-panel{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);}
 .qr-panel-select-row{display:flex;gap:8px;align-items:center;margin-bottom:14px;}
 .qr-session-select{flex:1;padding:10px 12px;border:1.5px solid var(--cream-d);border-radius:var(--r-md);font-size:13px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;appearance:none;}
@@ -235,19 +208,15 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .btn-download-qr{width:124px;padding:8px;background:#fff;color:var(--navy);border:1.5px solid var(--blue);border-radius:var(--r-sm);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s;white-space:nowrap;}
 .btn-download-qr:hover{background:var(--blue-l);}
 .qr-controls{display:flex;flex-direction:column;gap:8px;}
-.qr-action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.btn-action-outline{width:100%;padding:9px 12px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;}
-.btn-action-outline:hover{background:var(--cream-d);}
-.btn-action-outline.danger{color:var(--red);border-color:#FCA5A5;}
-.btn-action-outline.danger:hover{background:var(--red-l);}
-.selected-session-edit-slot{margin-top:10px;}
-.data-panel{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;}
-.data-panel-row{display:grid;grid-template-columns:1fr;gap:9px;}
 .qr-status-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .qr-status-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;}
 .qr-status-pill.inactive{background:var(--gray-l);color:var(--gray);}
 .qr-status-pill.active{background:var(--green-l);color:var(--green-d);}
 .scan-count-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;background:var(--blue-l);color:var(--blue-d);border-radius:99px;padding:3px 9px;}
+.selected-session-mini{font-size:11px;color:var(--ts);line-height:1.45;padding:1px 0 2px;}
+.selected-session-mini strong{font-size:12px;color:var(--tm);font-weight:700;}
+.qr-primary-row{display:grid;grid-template-columns:minmax(108px,.75fr) minmax(0,1fr);gap:8px;align-items:center;}
+.qr-primary-row .duration-select,.qr-primary-row .btn-activate{height:38px;}
 .duration-select{width:100%;padding:8px 10px;border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;}
 .duration-select:focus{border-color:var(--terra);}
 .btn-activate{width:100%;padding:9px 12px;background:var(--terra);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .2s;}
@@ -256,50 +225,13 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .countdown{font-size:12px;font-weight:700;color:var(--amber);display:flex;align-items:center;gap:4px;}
 .countdown.expired{color:var(--red);}
 .countdown i{font-size:14px;}
-.btn-download-history{width:100%;padding:9px 12px;background:#fff;color:var(--green-d);border:1.5px solid var(--green);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;white-space:nowrap;}
-.btn-download-history:hover{background:var(--green-l);}
-
-/* Minimal selected-session controls */
-.selected-session-mini{font-size:11px;color:var(--ts);line-height:1.45;padding:1px 0 2px;}
-.selected-session-mini strong{font-size:12px;color:var(--tm);font-weight:700;}
-.qr-primary-row{display:grid;grid-template-columns:minmax(108px,.75fr) minmax(0,1fr);gap:8px;align-items:center;}
-.qr-primary-row .duration-select,.qr-primary-row .btn-activate{height:38px;}
 .qr-action-row{display:grid;grid-template-columns:1fr 38px 38px;gap:8px;align-items:center;}
-.btn-mini{height:38px;padding:0 11px;background:#fff;color:var(--green-d);border:1.5px solid #BFD8C7;border-radius:var(--r-sm);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s;white-space:nowrap;}
-.btn-mini:hover{background:var(--green-l);}
 .btn-mini-icon{width:38px;height:38px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
 .btn-mini-icon:hover{background:var(--cream-d);}
 .btn-mini-icon.danger{color:var(--red);border-color:#F3B6B6;}
 .btn-mini-icon.danger:hover{background:var(--red-l);}
 .selected-session-edit-slot{margin-top:10px;}
 .selected-session-edit-slot:empty{display:none;}
-.selected-session-edit-slot .sess-edit-form{margin-top:0;}
-@media(max-width:380px){.qr-primary-row{grid-template-columns:1fr;}.qr-action-row{grid-template-columns:1fr 38px 38px;}}
-
-/* SESSION LIST MANAGEMENT (admin) */
-.sess-mgmt-list{display:grid;gap:10px;margin-top:12px;}
-.sess-mgmt-card{background:#fff;border-radius:var(--r-md);border:.5px solid #E8DDD4;padding:14px 16px;box-shadow:var(--shadow);}
-.sess-mgmt-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.sess-mgmt-name{font-size:14px;font-weight:700;color:var(--tm);}
-.sess-mgmt-meta{font-size:11px;color:var(--ts);margin-top:2px;}
-.btn-icon{background:none;border:1.5px solid var(--cream-d);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--ts);transition:.2s;flex-shrink:0;}
-.btn-icon:hover{background:var(--cream-d);}
-.btn-icon.danger{border-color:#FCA5A5;color:var(--red);}
-.btn-icon.danger:hover{background:var(--red-l);}
-
-/* INLINE EDIT FORM */
-.sess-edit-form{background:var(--cream);border-radius:var(--r-md);padding:12px;margin-top:10px;border:1.5px solid var(--terra-l);display:none;flex-direction:column;gap:9px;}
-.sess-edit-form.open{display:flex;}
-.edit-form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.edit-form-input{width:100%;padding:9px 11px;border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;}
-.edit-form-input:focus{border-color:var(--terra);}
-.edit-form-select{width:100%;padding:9px 11px;border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;appearance:none;}
-.edit-form-select:focus{border-color:var(--terra);}
-.edit-form-actions{display:flex;gap:7px;}
-.btn-save{flex:1;padding:9px;background:var(--terra);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .2s;}
-.btn-save:hover{opacity:.9;}
-.btn-cancel-edit{padding:9px 14px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);}
-.btn-cancel-edit:hover{background:var(--cream-d);}
 
 /* ADD SESSION FORM */
 .btn-add-session{width:100%;padding:11px;background:#fff;color:var(--terra);border:1.5px dashed var(--terra-l);border-radius:var(--r-md);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:10px;transition:background .2s;}
@@ -317,6 +249,26 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .btn-create:hover{opacity:.9;}
 .btn-create:disabled{opacity:.4;cursor:not-allowed;}
 .btn-cancel-new{padding:10px 14px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);}
+
+/* INLINE EDIT FORM */
+.sess-edit-form{background:var(--cream);border-radius:var(--r-md);padding:12px;margin-top:10px;border:1.5px solid var(--terra-l);display:none;flex-direction:column;gap:9px;}
+.sess-edit-form.open{display:flex;}
+.edit-form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.edit-form-input{width:100%;padding:9px 11px;border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;}
+.edit-form-input:focus{border-color:var(--terra);}
+.edit-form-select{width:100%;padding:9px 11px;border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-family:var(--font);color:var(--tm);background:#fff;outline:none;appearance:none;}
+.edit-form-select:focus{border-color:var(--terra);}
+.edit-form-actions{display:flex;gap:7px;}
+.btn-save{flex:1;padding:9px;background:var(--terra);color:#fff;border:none;border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .2s;}
+.btn-save:hover{opacity:.9;}
+.btn-cancel-edit{padding:9px 14px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);}
+.btn-cancel-edit:hover{background:var(--cream-d);}
+
+/* DATA / DOWNLOAD PANEL */
+.data-panel{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;}
+.data-panel-row{display:grid;grid-template-columns:1fr;gap:9px;}
+.btn-download-history{width:100%;padding:9px 12px;background:#fff;color:var(--green-d);border:1.5px solid var(--green);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;white-space:nowrap;}
+.btn-download-history:hover{background:var(--green-l);}
 
 /* ADMIN PARTICIPANTS */
 .search-wrap{position:relative;margin-bottom:12px;}
@@ -388,7 +340,6 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
       <div class="form-group"><label class="form-label">Organisation Email</label><input class="form-input" id="login-email" type="email" placeholder="you@company.com"></div>
       <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-password" type="password" placeholder="••••••••"></div>
       <button class="btn-primary" id="btn-login" onclick="handleLogin()"><i class="ti ti-login"></i> Sign In</button>
-      <div class="auth-note" style="margin-top:16px;"><strong>Demo logins:</strong><br>Participant: <code>arisa@company.com</code> / <code>pass123</code><br>Admin: <code>admin@company.com</code> / <code>admin123</code></div>
     </div>
     <div id="form-signup" style="display:none;">
       <div id="signup-error" class="error-msg"></div>
@@ -419,14 +370,6 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
     <div class="section">
       <div class="slabel">Your stamp card</div>
       <div class="card">
-        <div class="reward-carousel" id="p-reward-carousel">
-          <div class="reward-carousel-stage" id="p-reward-carousel-stage"></div>
-          <div class="reward-carousel-nav">
-            <button class="reward-nav-btn" type="button" aria-label="Previous reward" onclick="changeRewardSlide(-1)"><i class="ti ti-chevron-left"></i></button>
-            <div class="reward-carousel-dots" id="p-reward-carousel-dots"></div>
-            <button class="reward-nav-btn" type="button" aria-label="Next reward" onclick="changeRewardSlide(1)"><i class="ti ti-chevron-right"></i></button>
-          </div>
-        </div>
         <div class="track">
           <div class="track-lbl"><span class="tl s">Start</span><span class="tl m">5 pts ☕</span><span class="tl e">10 pts 🎁</span></div>
           <div class="tline"><div class="tfill" id="p-fill"></div></div>
@@ -438,8 +381,14 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
           <h4>Your rewards</h4>
           <p>Show your QR code to the facilitator to redeem. Only the facilitator can mark it as redeemed.</p>
           <div class="qr-cards">
-            <div class="qr-card locked" id="qr5-card"><div class="qr-box"><svg width="60" height="60" viewBox="0 0 60 60" id="qr5-svg"></svg></div><div class="qr-lbl">Starbucks</div><div class="qr-sub" id="qr5-sub">5 stamps needed</div></div>
-            <div class="qr-card locked" id="qr10-card"><div class="qr-box"><svg width="60" height="60" viewBox="0 0 60 60" id="qr10-svg"></svg></div><div class="qr-lbl">Free Gadget</div><div class="qr-sub" id="qr10-sub">10 stamps needed</div></div>
+            <div class="qr-card locked" id="qr5-card">
+              <div class="qr-box"><svg width="60" height="60" viewBox="0 0 60 60" id="qr5-svg"></svg></div>
+              <div class="qr-lbl">Starbucks</div><div class="qr-sub" id="qr5-sub">5 stamps needed</div>
+            </div>
+            <div class="qr-card locked" id="qr10-card">
+              <div class="qr-box"><svg width="60" height="60" viewBox="0 0 60 60" id="qr10-svg"></svg></div>
+              <div class="qr-lbl">Free Gadget</div><div class="qr-sub" id="qr10-sub">10 stamps needed</div>
+            </div>
           </div>
         </div>
       </div>
@@ -447,10 +396,16 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
     <div class="section mt-16">
       <div class="slabel">Sessions</div>
       <div class="sess-grid" id="p-sessions"></div>
-      <button class="btn-next-sessions" id="btn-next-sessions" onclick="showNextSessions()" style="display:none;"><i class="ti ti-arrow-right"></i> Next sessions</button>
+      <div class="sess-pager" id="sess-pager" style="display:none;">
+        <button class="btn-pager" id="btn-prev-sess" onclick="changeSessionPage(-1)" aria-label="Previous sessions"><i class="ti ti-chevron-left"></i></button>
+        <span class="sess-pager-info" id="sess-pager-info"></span>
+        <button class="btn-pager" id="btn-next-sess" onclick="changeSessionPage(1)" aria-label="Next sessions"><i class="ti ti-chevron-right"></i></button>
+      </div>
     </div>
     <div class="p-actions">
-      <button class="btn-scan" id="btn-open-scanner" onclick="openScanner()"><i class="ti ti-qrcode-scan"></i> Scan Session QR Code</button>
+      <button class="btn-scan" id="btn-open-scanner" onclick="openScanner()">
+        <i class="ti ti-qrcode-scan"></i> Scan Session QR Code
+      </button>
       <div class="feedback-card">
         <h4>Give feedback</h4><p>Share your thoughts to help us improve the AI Community sessions.</p>
         <div class="feedback-inner">
@@ -485,10 +440,8 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
       </div>
     </div>
 
-    <!-- Session Management -->
     <div class="section mt-16">
       <div class="slabel">Manage Sessions</div>
-
       <div class="qr-panel">
         <div class="qr-panel-select-row">
           <select class="qr-session-select" id="qr-session-select" onchange="renderQRPanel()">
@@ -517,12 +470,12 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
               </div>
               <div class="countdown" id="qr-panel-countdown" style="display:none;"><i class="ti ti-clock"></i> <span></span></div>
               <div class="qr-action-row">
-                <button class="btn-mini-icon" id="btn-selected-edit" title="Edit session"><i class="ti ti-pencil"></i></button>
-                <button class="btn-mini-icon danger" id="btn-selected-delete" title="Delete session"><i class="ti ti-trash"></i></button>
+                <span></span>
+                <button class="btn-mini-icon" id="btn-selected-edit" title="Edit session" onclick="openSelectedEdit()"><i class="ti ti-pencil"></i></button>
+                <button class="btn-mini-icon danger" id="btn-selected-delete" title="Delete session" onclick="deleteSelectedSession()"><i class="ti ti-trash"></i></button>
               </div>
             </div>
           </div>
-
           <div class="selected-session-edit-slot" id="selected-session-card"></div>
         </div>
       </div>
@@ -546,7 +499,6 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
       </div>
     </div>
 
-    <!-- Data Collections -->
     <div class="section mt-16">
       <div class="slabel">Data collections</div>
       <div class="data-panel">
@@ -554,12 +506,11 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
           <select class="qr-session-select" id="data-session-select">
             <option value="all">All sessions</option>
           </select>
-          <button class="btn-download-history" id="btn-data-download" onclick="downloadSelectedScanHistory()"><i class="ti ti-table-export"></i> Download scan history</button>
+          <button class="btn-download-history" onclick="downloadSelectedScanHistory()"><i class="ti ti-table-export"></i> Download scan history</button>
         </div>
       </div>
     </div>
 
-    <!-- Participants -->
     <div class="section mt-16">
       <div class="slabel">Participants</div>
       <div class="search-wrap"><i class="ti ti-search search-icon"></i><input class="search-input" id="a-search" type="text" placeholder="Search by name or email…" oninput="renderAdminParticipants()"></div>
@@ -607,11 +558,10 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbx9FDwSPE9aAROR2MU_MYpT
 var currentUser = null, allSessions = [], adminUsers = [], activeFilter = 'all';
 var scanStream = null, scanAnimFrame = null, scanDone = false;
 var countdownTimer = null;
-var sessionPage = 0, sessionPageSize = 4; // participant session paging state
-var rewardSlideIndex = 0;
+var sessionPage = 0;
+var SESSION_PAGE_SIZE = 3;
 var LOCATION_OPTIONS = ['Building1','Building2','Building3'];
 
-// ── API ──
 function apiRequest(action, payload) {
   payload = payload || {};
   payload.action = action;
@@ -623,7 +573,6 @@ function apiRequest(action, payload) {
 function busy(id,lbl){ var b=document.getElementById(id); if(!b) return; b.dataset.orig=b.innerHTML; b.disabled=true; b.innerHTML='<i class="ti ti-loader-2"></i> '+lbl; }
 function restore(id){ var b=document.getElementById(id); if(!b) return; if(b.dataset.orig) b.innerHTML=b.dataset.orig; b.disabled=false; }
 
-// ── Normalise ──
 function normalizeUser(u){
   var name=String(u.name||u.full_name||'');
   var init=name.split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2)||'U';
@@ -639,37 +588,29 @@ function normalizeSession(s){
     icon:String(s.icon||'ti-brain'), location:String(s.location||''), time:String(s.time||''),
     qrActive:Boolean(s.qrActive), qrExpiresAt:Number(s.qrExpiresAt||0), qrToken:String(s.qrToken||'') };
 }
-
-function htmlAttr(v){
-  return String(v||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function htmlAttr(v){ return String(v||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function buildLocationOptions(selected){
   selected=String(selected||'');
   return LOCATION_OPTIONS.map(function(loc){
     return '<option value="'+htmlAttr(loc)+'"'+(loc===selected?' selected':'')+'>'+loc+'</option>';
   }).join('');
 }
-
-// ── Date helpers ──
 function formatDateOnly(ts){
   if(!ts) return '';
   var d=new Date(ts);
-  if(!isNaN(d.getTime())){
+  if(!isNaN(d.getTime()))
     return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
-  }
   var mo={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
   var p=ts.split(' ');
   if(p.length>=3) return String(p[0]).padStart(2,'0')+'/'+(mo[p[1]]?String(mo[p[1]]).padStart(2,'0'):'00')+'/'+p[2];
   return ts;
 }
 
-// ── Init ──
 (function init(){
   var saved=localStorage.getItem('aiStampSession');
   if(saved){ try{ currentUser=normalizeUser(JSON.parse(saved)); bootUser(); }catch(e){ localStorage.removeItem('aiStampSession'); } }
 })();
 
-// ── Auth ──
 function switchAuthTab(tab){
   document.querySelectorAll('.auth-tab').forEach(function(el,i){ el.classList.toggle('active',['login','signup'][i]===tab); });
   document.getElementById('form-login').style.display=tab==='login'?'block':'none';
@@ -754,68 +695,9 @@ function renderStamps(){
   document.getElementById('p-fill').style.width=Math.min(100,u.stamps*10)+'%';
   document.getElementById('p-d5').className='dot'+(u.stamps>=5?' rg':'');
   document.getElementById('p-d10').className='dot'+(u.stamps>=10?' rb':'');
-
-  renderRewardCarousel();
-
   document.getElementById('btn-open-scanner').disabled=u.stamps>=10;
   updateRewardQRCard('qr5-card','qr5-sub','qr5-svg',3,u.stamps>=5,u.sbux,'5 stamps needed');
   updateRewardQRCard('qr10-card','qr10-sub','qr10-svg',7,u.stamps>=10,u.gadget,'10 stamps needed');
-}
-
-
-function getRewardCarouselItems(){
-  var u=currentUser||{};
-  return [
-    {
-      key:'sbux',
-      title:'Starbucks card',
-      note:u.sbux ? 'Redeemed successfully. Enjoy your reward!' : (u.stamps>=5 ? 'Unlocked — show your reward QR to the facilitator.' : 'Unlocks when you reach 5 stamps.'),
-      stateLabel:u.sbux ? 'Redeemed' : (u.stamps>=5 ? 'Unlocked' : 'Locked'),
-      stateClass:u.sbux ? 'redeemed' : (u.stamps>=5 ? 'unlocked' : 'locked'),
-      visualClass:'sbux',
-      visualHtml:'<div class="reward-glow"></div><div class="reward-photo"><div class="reward-photo-card"><div class="reward-photo-card-top"><span class="reward-photo-card-brand">STARBUCKS</span><span class="reward-photo-card-chip"></span></div><div class="reward-photo-card-bottom">Gift Card</div></div></div>'
-    },
-    {
-      key:'gadget',
-      title:'Free gadget',
-      note:u.gadget ? 'Redeemed successfully. Congratulations!' : (u.stamps>=10 ? 'Unlocked — show your reward QR to the facilitator.' : 'Unlocks when you reach 10 stamps.'),
-      stateLabel:u.gadget ? 'Redeemed' : (u.stamps>=10 ? 'Unlocked' : 'Locked'),
-      stateClass:u.gadget ? 'redeemed' : (u.stamps>=10 ? 'unlocked' : 'locked'),
-      visualClass:'gadget',
-      visualHtml:'<div class="reward-glow"></div><div class="reward-photo"><div class="reward-photo-gadget"><div class="reward-photo-screen"><div class="reward-photo-icon"><i class="ti ti-device-mobile"></i></div></div></div></div>'
-    }
-  ];
-}
-
-function renderRewardCarousel(){
-  var stage=document.getElementById('p-reward-carousel-stage');
-  var dots=document.getElementById('p-reward-carousel-dots');
-  if(!stage||!dots) return;
-  var items=getRewardCarouselItems();
-  if(rewardSlideIndex>=items.length) rewardSlideIndex=0;
-  stage.innerHTML=items.map(function(item,idx){
-    return '<div class="reward-slide'+(idx===rewardSlideIndex?' active':'')+'">'+
-      '<div class="reward-visual '+item.visualClass+'">'+item.visualHtml+'</div>'+
-      '<div class="reward-meta">'+
-        '<div class="reward-text"><h4>'+item.title+'</h4><p>'+item.note+'</p></div>'+
-        '<span class="reward-state '+item.stateClass+'">'+item.stateLabel+'</span>'+
-      '</div>'+
-    '</div>';
-  }).join('');
-  dots.innerHTML=items.map(function(item,idx){
-    return '<button class="reward-dot-btn'+(idx===rewardSlideIndex?' active':'')+'" type="button" aria-label="Go to '+item.title+'" onclick="goToRewardSlide('+idx+')"></button>';
-  }).join('');
-}
-
-function changeRewardSlide(step){
-  var items=getRewardCarouselItems();
-  rewardSlideIndex=(rewardSlideIndex+step+items.length)%items.length;
-  renderRewardCarousel();
-}
-
-function goToRewardSlide(index){
-  rewardSlideIndex=index||0;
-  renderRewardCarousel();
 }
 
 function updateRewardQRCard(cardId,subId,svgId,seed,eligible,redeemed,lockedMsg){
@@ -825,6 +707,7 @@ function updateRewardQRCard(cardId,subId,svgId,seed,eligible,redeemed,lockedMsg)
   else if(eligible){ card.classList.add('active-qr'); sub.textContent='Show to facilitator'; drawSVGQR(svgId,seed); }
   else { card.classList.add('locked'); sub.textContent=lockedMsg; }
 }
+
 function drawSVGQR(svgId,seed){
   var svg=document.getElementById(svgId); if(!svg) return; svg.innerHTML='';
   var G=7,CS=8,PAD=2,pat=[];
@@ -835,7 +718,7 @@ function drawSVGQR(svgId,seed){
     var rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
     rect.setAttribute('x',String(PAD+c2*CS)); rect.setAttribute('y',String(PAD+r2*CS));
     rect.setAttribute('width',String(CS-1)); rect.setAttribute('height',String(CS-1));
-    rect.setAttribute('fill','white'); svg.appendChild(rect);
+    rect.setAttribute('fill','#2C1F14'); svg.appendChild(rect);
   }
 }
 
@@ -843,10 +726,11 @@ function renderSessions(){
   var u=currentUser, grid=document.getElementById('p-sessions');
   grid.innerHTML='';
   var total=allSessions.length;
-  var totalPages=Math.max(1,Math.ceil(total/sessionPageSize));
+  var totalPages=Math.max(1,Math.ceil(total/SESSION_PAGE_SIZE));
   if(sessionPage>=totalPages) sessionPage=0;
-  var start=sessionPage*sessionPageSize;
-  var visible=allSessions.slice(start,start+sessionPageSize);
+  if(sessionPage<0) sessionPage=totalPages-1;
+  var start=sessionPage*SESSION_PAGE_SIZE;
+  var visible=allSessions.slice(start,start+SESSION_PAGE_SIZE);
   visible.forEach(function(s){
     var claimed=u.claimedSessions.indexOf(s.id)!==-1;
     var status=claimed?'col':(s.qrActive?'avl':'upc');
@@ -873,22 +757,25 @@ function renderSessions(){
       '</div>';
     grid.appendChild(card);
   });
-  var btn=document.getElementById('btn-next-sessions');
-  if(total>sessionPageSize){
-    var nextPage=(sessionPage+1)%totalPages;
-    var nextStart=nextPage*sessionPageSize+1;
-    var nextEnd=Math.min(total,(nextPage+1)*sessionPageSize);
-    btn.style.display='flex';
-    btn.innerHTML=nextPage===0
-      ? '<i class="ti ti-rotate-clockwise"></i> Back to first sessions'
-      : '<i class="ti ti-arrow-right"></i> Next sessions ('+nextStart+'–'+nextEnd+')';
+  // Pager
+  var pager=document.getElementById('sess-pager');
+  var prevBtn=document.getElementById('btn-prev-sess');
+  var nextBtn=document.getElementById('btn-next-sess');
+  var info=document.getElementById('sess-pager-info');
+  if(total>SESSION_PAGE_SIZE){
+    pager.style.display='flex';
+    prevBtn.disabled=(sessionPage===0);
+    nextBtn.disabled=(sessionPage>=totalPages-1);
+    info.textContent=(start+1)+'–'+Math.min(total,start+SESSION_PAGE_SIZE)+' of '+total;
   } else {
-    btn.style.display='none';
+    pager.style.display='none';
   }
 }
-function showNextSessions(){
-  var totalPages=Math.max(1,Math.ceil(allSessions.length/sessionPageSize));
-  sessionPage=(sessionPage+1)%totalPages;
+
+function changeSessionPage(dir){
+  var total=allSessions.length;
+  var totalPages=Math.max(1,Math.ceil(total/SESSION_PAGE_SIZE));
+  sessionPage=Math.max(0,Math.min(totalPages-1,sessionPage+dir));
   renderSessions();
 }
 
@@ -958,7 +845,6 @@ async function submitQRToken(token){
 // ══ ADMIN ══
 function renderAdmin(){ populateQRSessionSelect(); populateDataSessionSelect(); renderQRPanel(); renderAdminParticipants(); }
 
-// Populate the session dropdown
 function populateQRSessionSelect(){
   var sel=document.getElementById('qr-session-select');
   var current=sel.value;
@@ -972,8 +858,7 @@ function populateQRSessionSelect(){
 }
 
 function populateDataSessionSelect(){
-  var sel=document.getElementById('data-session-select');
-  if(!sel) return;
+  var sel=document.getElementById('data-session-select'); if(!sel) return;
   var current=sel.value||'all';
   sel.innerHTML='<option value="all">All sessions</option>';
   allSessions.forEach(function(s){
@@ -984,32 +869,28 @@ function populateDataSessionSelect(){
   sel.value=Array.prototype.some.call(sel.options,function(o){ return o.value===current; })?current:'all';
 }
 
-// Render the QR panel for the selected session
 function renderQRPanel(){
   if(countdownTimer){ clearInterval(countdownTimer); countdownTimer=null; }
   var sid=Number(document.getElementById('qr-session-select').value);
   var content=document.getElementById('qr-panel-content');
-  if(!sid){ content.style.display='none'; renderSelectedSessionMgmt(null); return; }
+  if(!sid){ content.style.display='none'; document.getElementById('selected-session-card').innerHTML=''; return; }
   var s=allSessions.find(function(x){ return x.id===sid; });
-  if(!s){ content.style.display='none'; renderSelectedSessionMgmt(null); return; }
+  if(!s){ content.style.display='none'; document.getElementById('selected-session-card').innerHTML=''; return; }
   content.style.display='block';
-  renderSelectedSessionMgmt(s);
 
   var isActive=s.qrActive&&s.qrExpiresAt>Date.now();
   var claimCount=adminUsers.filter(function(u){ return u.claimedSessions.indexOf(sid)!==-1; }).length;
 
-  // Status pill
   var pill=document.getElementById('qr-panel-status');
   pill.textContent=isActive?'Active':'Inactive';
   pill.className='qr-status-pill '+(isActive?'active':'inactive');
-
-  // Scan count
   document.getElementById('qr-panel-count').innerHTML='<i class="ti ti-users" style="font-size:10px;"></i> '+claimCount+' scanned';
 
-  // Activate button label
+  var mini=document.getElementById('selected-session-mini');
+  mini.innerHTML='<strong>'+htmlAttr(s.name)+'</strong>'+(s.type?' &nbsp;·&nbsp; '+htmlAttr(s.type):'')+(s.time?' &nbsp;·&nbsp; '+htmlAttr(s.time):'')+(s.location?' &nbsp;·&nbsp; '+htmlAttr(s.location):'');
+
   document.getElementById('btn-panel-activate').innerHTML='<i class="ti ti-qrcode"></i> '+(isActive?'Refresh QR':'Activate QR');
 
-  // QR display
   var box=document.getElementById('qr-panel-box');
   box.innerHTML='';
   if(isActive&&s.qrToken){
@@ -1021,22 +902,21 @@ function renderQRPanel(){
     document.getElementById('btn-dl-qr').style.display='none';
   }
 
-  // Countdown
   var cdEl=document.getElementById('qr-panel-countdown');
   if(isActive){
     cdEl.style.display='flex';
-    countdownTimer=setInterval(function(){
+    function tick(){
       var rem=Math.max(0,Math.floor((s.qrExpiresAt-Date.now())/1000));
       var m=Math.floor(rem/60), sec=rem%60;
-      cdEl.querySelector('span').textContent='Expires in '+m+':'+(sec<10?'0':'')+sec;
+      var sp=cdEl.querySelector('span');
+      if(sp) sp.textContent='Expires in '+m+':'+(sec<10?'0':'')+sec;
       cdEl.className='countdown'+(rem<60?' expired':'');
       if(rem===0){ clearInterval(countdownTimer); countdownTimer=null; setTimeout(refreshAdminData,1000); }
-    },1000);
-    // trigger immediately
-    var rem=Math.max(0,Math.floor((s.qrExpiresAt-Date.now())/1000));
-    var m=Math.floor(rem/60), sec=rem%60;
-    cdEl.innerHTML='<i class="ti ti-clock"></i> <span>Expires in '+m+':'+(sec<10?'0':'')+sec+'</span>';
-    cdEl.className='countdown'+(rem<60?' expired':'');
+    }
+    tick();
+    countdownTimer=setInterval(tick,1000);
+    cdEl.innerHTML='<i class="ti ti-clock"></i> <span></span>';
+    tick();
   } else {
     cdEl.style.display='none';
   }
@@ -1066,8 +946,8 @@ function downloadPanelQR(){
     new QRCode(temp,{text:s.qrToken,width:1200,height:1200,colorDark:'#2C1F14',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.L});
     setTimeout(function(){
       try{
-        var canvas=temp.querySelector('canvas'), img=temp.querySelector('img');
-        var href=canvas?canvas.toDataURL('image/png'):(img?img.src:'');
+        var canvas=temp.querySelector('canvas'), img2=temp.querySelector('img');
+        var href=canvas?canvas.toDataURL('image/png'):(img2?img2.src:'');
         if(!href) throw new Error('Could not generate PNG.');
         var link=document.createElement('a'); link.href=href; link.download=sanitizeFilename(s.name)+'-qr.png';
         document.body.appendChild(link); link.click(); document.body.removeChild(link);
@@ -1077,47 +957,42 @@ function downloadPanelQR(){
   }catch(err){ if(temp.parentNode) temp.parentNode.removeChild(temp); alert('Download failed: '+err.message); }
 }
 
-function downloadPanelHistory(){
+function openSelectedEdit(){
   var sid=Number(document.getElementById('qr-session-select').value);
   if(!sid){ alert('Please select a session first.'); return; }
-  downloadSessionScanHistory(sid);
-}
-
-// Selected session management (admin)
-function renderSelectedSessionMgmt(s){
-  var actions=document.getElementById('selected-session-actions');
+  var s=allSessions.find(function(x){ return x.id===sid; });
+  if(!s) return;
   var slot=document.getElementById('selected-session-card');
-  if(!actions || !slot) return;
-  if(!s){ actions.innerHTML=''; slot.innerHTML=''; return; }
-
-  var safeName = String(s.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-  actions.innerHTML=
-    '<button class="btn-action-outline" title="Edit selected session" onclick="toggleEditForm('+s.id+')"><i class="ti ti-pencil"></i> Edit session</button>'+ 
-    '<button class="btn-action-outline danger" title="Delete selected session" onclick="deleteSession('+s.id+',\''+safeName+'\')"><i class="ti ti-trash"></i> Delete</button>';
-
   var typeOpts=['Sharing','Workshop','Sharing & Workshop'].map(function(t){
     return '<option value="'+htmlAttr(t)+'"'+(t===s.type?' selected':'')+'>'+t+'</option>';
   }).join('');
-  var locOpts=buildLocationOptions(s.location);
   slot.innerHTML=
-    '<div class="sess-edit-form" id="edit-form-'+s.id+'">'+
-      '<div><label class="form-label" style="font-size:10px;">Session Name</label>'+ 
-      '<input class="edit-form-input" id="ef-name-'+s.id+'" value="'+htmlAttr(s.name)+'" placeholder="Session name"></div>'+ 
-      '<div class="edit-form-row">'+ 
-        '<div><label class="form-label" style="font-size:10px;">Type</label>'+ 
-        '<select class="edit-form-select" id="ef-type-'+s.id+'">'+typeOpts+'</select></div>'+ 
-        '<div><label class="form-label" style="font-size:10px;">Time</label>'+ 
-        '<input class="edit-form-input" id="ef-time-'+s.id+'" value="'+htmlAttr(s.time)+'" placeholder="09:00–10:00"></div>'+ 
-      '</div>'+ 
-      '<div><label class="form-label" style="font-size:10px;">Location</label>'+ 
-      '<select class="edit-form-select" id="ef-loc-'+s.id+'">'+locOpts+'</select></div>'+ 
-      '<div><label class="form-label" style="font-size:10px;">Description</label>'+ 
-      '<input class="edit-form-input" id="ef-desc-'+s.id+'" value="'+htmlAttr(s.desc)+'" placeholder="Description"></div>'+ 
-      '<div class="edit-form-actions">'+ 
-        '<button class="btn-save" id="btn-save-'+s.id+'" onclick="saveSession('+s.id+')"><i class="ti ti-check"></i> Save Changes</button>'+ 
-        '<button class="btn-cancel-edit" onclick="toggleEditForm('+s.id+')">Cancel</button>'+ 
-      '</div>'+ 
+    '<div class="sess-edit-form open" id="edit-form-'+s.id+'">'+
+      '<div><label class="form-label" style="font-size:10px;">Session Name</label>'+
+      '<input class="edit-form-input" id="ef-name-'+s.id+'" value="'+htmlAttr(s.name)+'" placeholder="Session name"></div>'+
+      '<div class="edit-form-row">'+
+        '<div><label class="form-label" style="font-size:10px;">Type</label>'+
+        '<select class="edit-form-select" id="ef-type-'+s.id+'">'+typeOpts+'</select></div>'+
+        '<div><label class="form-label" style="font-size:10px;">Time</label>'+
+        '<input class="edit-form-input" id="ef-time-'+s.id+'" value="'+htmlAttr(s.time)+'" placeholder="09:00–10:00"></div>'+
+      '</div>'+
+      '<div><label class="form-label" style="font-size:10px;">Location</label>'+
+      '<select class="edit-form-select" id="ef-loc-'+s.id+'">'+buildLocationOptions(s.location)+'</select></div>'+
+      '<div><label class="form-label" style="font-size:10px;">Description</label>'+
+      '<input class="edit-form-input" id="ef-desc-'+s.id+'" value="'+htmlAttr(s.desc)+'" placeholder="Description"></div>'+
+      '<div class="edit-form-actions">'+
+        '<button class="btn-save" id="btn-save-'+s.id+'" onclick="saveSession('+s.id+')"><i class="ti ti-check"></i> Save Changes</button>'+
+        '<button class="btn-cancel-edit" onclick="document.getElementById(\'selected-session-card\').innerHTML=\'\'">Cancel</button>'+
+      '</div>'+
     '</div>';
+}
+
+async function deleteSelectedSession(){
+  var sid=Number(document.getElementById('qr-session-select').value);
+  if(!sid){ alert('Please select a session first.'); return; }
+  var s=allSessions.find(function(x){ return x.id===sid; });
+  if(!s) return;
+  await deleteSession(sid,s.name);
 }
 
 function toggleNewSessionForm(open){
@@ -1144,19 +1019,12 @@ async function createSession(){
     var data=await apiRequest('createSession',{adminEmail:currentUser.email,sessionName:name,sessionType:type,time:time,location:location,description:desc});
     adminUsers=(data.participants||[]).map(normalizeUser);
     allSessions=(data.sessions||[]).map(normalizeSession);
-    var created=allSessions.find(function(s){ return !existingIds[s.id]; }) || allSessions[allSessions.length-1];
+    var created=allSessions.find(function(s){ return !existingIds[s.id]; })||allSessions[allSessions.length-1];
     toggleNewSessionForm(false);
     renderAdmin();
     if(created){ document.getElementById('qr-session-select').value=created.id; renderQRPanel(); }
   }catch(e){ alert('Error: '+e.message); }
   finally{ restore('btn-create-session'); }
-}
-
-function toggleEditForm(sid){
-  var form=document.getElementById('edit-form-'+sid); if(!form) return;
-  var isOpen=form.classList.contains('open');
-  document.querySelectorAll('.sess-edit-form.open').forEach(function(f){ f.classList.remove('open'); });
-  if(!isOpen) form.classList.add('open');
 }
 
 async function saveSession(sid){
@@ -1172,7 +1040,9 @@ async function saveSession(sid){
     var data=await apiRequest('updateSession',{adminEmail:currentUser.email,sessionId:sid,sessionName:name,sessionType:type,time:time,location:location,description:desc});
     adminUsers=(data.participants||[]).map(normalizeUser);
     allSessions=(data.sessions||[]).map(normalizeSession);
+    document.getElementById('selected-session-card').innerHTML='';
     renderAdmin();
+    document.getElementById('qr-session-select').value=sid; renderQRPanel();
   }catch(e){ alert('Error: '+e.message); }
   finally{ restore(btnId); }
 }
@@ -1267,7 +1137,6 @@ function setFilter(btn,filter){
   btn.classList.add('active'); activeFilter=filter; renderAdminParticipants();
 }
 
-// ── CSV downloads ──
 function sanitizeFilename(name){ return String(name||'file').trim().replace(/[^a-z0-9-_]+/gi,'-').replace(/^-+|-+$/g,'')||'file'; }
 function csvEscape(v){ var s=String(v==null?'':v); return (s.indexOf('"')!==-1||s.indexOf(',')!==-1||s.indexOf('\n')!==-1)?'"'+s.replace(/"/g,'""')+'"':s; }
 function downloadCsv(filename,rows){
