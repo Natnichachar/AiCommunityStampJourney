@@ -405,8 +405,7 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
     <div class="section">
       <div class="slabel">Your stamp card</div>
       <div class="card">
-        <!-- Reward banner (shows only when something is redeemed) -->
-        <div id="p-reward-banner" style="display:none;"></div>
+
         <div class="ms-row">
           <div class="ms-card" id="p-ms5">
             <div class="ms-gfx g-sbux"><svg width="22" height="22" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="10" r="5" fill="white" opacity=".9"/><path d="M9 15 Q13 20 17 15" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
@@ -751,24 +750,6 @@ function renderStamps(){
   else if(u.stamps>=10){ ms10.classList.add('gadget-on'); document.getElementById('p-ms10-sub').textContent='Unlocked!'; }
   else                 { document.getElementById('p-ms10-sub').textContent='Unlock at 10 stamps'; }
 
-  // Reward banner — single merged notice when any reward redeemed
-  var banner=document.getElementById('p-reward-banner');
-  if(u.sbux&&u.gadget){
-    banner.style.display='flex';
-    banner.className='reward-banner both';
-    banner.innerHTML='<i class="ti ti-gift"></i><div class="reward-banner-text">Both rewards redeemed — Starbucks card &amp; free gadget. Well done! 🎉</div>';
-  } else if(u.sbux){
-    banner.style.display='flex';
-    banner.className='reward-banner sbux-only';
-    banner.innerHTML='<i class="ti ti-coffee"></i><div class="reward-banner-text">Starbucks card redeemed ✓ — Keep going for your free gadget!</div>';
-  } else if(u.gadget){
-    banner.style.display='flex';
-    banner.className='reward-banner gadget-only';
-    banner.innerHTML='<i class="ti ti-device-laptop"></i><div class="reward-banner-text">Free gadget redeemed ✓ — Congratulations on completing the journey!</div>';
-  } else {
-    banner.style.display='none';
-    banner.innerHTML='';
-  }
 
   document.getElementById('btn-open-scanner').disabled=u.stamps>=10;
   updateRewardQRCard('qr5-card','qr5-sub','qr5-svg',3,u.stamps>=5,u.sbux,'5 stamps needed');
