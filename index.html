@@ -1092,7 +1092,7 @@ function renderSelectedSessionMgmt(s){
   if(!actions || !slot) return;
   if(!s){ actions.innerHTML=''; slot.innerHTML=''; return; }
 
-  var safeName=String(s.name||'').replace(/\/g,'\\').replace(/'/g,"\\'");
+  var safeName = String(s.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   actions.innerHTML=
     '<button class="btn-action-outline" title="Edit selected session" onclick="toggleEditForm('+s.id+')"><i class="ti ti-pencil"></i> Edit session</button>'+ 
     '<button class="btn-action-outline danger" title="Delete selected session" onclick="deleteSession('+s.id+',\''+safeName+'\')"><i class="ti ti-trash"></i> Delete</button>';
