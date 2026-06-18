@@ -164,9 +164,9 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .scan-ts{font-size:11px;color:var(--ts);margin-top:5px;display:flex;align-items:center;gap:4px;}
 .scan-ts i{font-size:12px;color:var(--terra-l);}
 
-/* Show more button */
-.btn-show-more{width:100%;padding:11px;background:#fff;color:var(--terra);border:1.5px solid var(--terra-l);border-radius:var(--r-md);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px;transition:background .2s;}
-.btn-show-more:hover{background:var(--terra-p);}
+/* Next sessions button */
+.btn-next-sessions{width:100%;padding:11px;background:#fff;color:var(--terra);border:1.5px solid var(--terra-l);border-radius:var(--r-md);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px;transition:background .2s;}
+.btn-next-sessions:hover{background:var(--terra-p);}
 
 /* ACTIONS */
 .p-actions{padding:20px 16px 0;display:flex;flex-direction:column;gap:10px;}
@@ -420,7 +420,7 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
     <div class="section mt-16">
       <div class="slabel">Sessions</div>
       <div class="sess-grid" id="p-sessions"></div>
-      <button class="btn-show-more" id="btn-show-more" onclick="showMoreSessions()" style="display:none;"><i class="ti ti-chevron-down"></i> Show more sessions</button>
+      <button class="btn-next-sessions" id="btn-next-sessions" onclick="showNextSessions()" style="display:none;"><i class="ti ti-arrow-right"></i> Next sessions</button>
     </div>
     <div class="p-actions">
       <button class="btn-scan" id="btn-open-scanner" onclick="openScanner()"><i class="ti ti-qrcode-scan"></i> Scan Session QR Code</button>
@@ -458,9 +458,10 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
       </div>
     </div>
 
-    <!-- QR Panel -->
+    <!-- Session Management + QR Panel -->
     <div class="section mt-16">
-      <div class="slabel">Session QR Code</div>
+      <div class="slabel">Manage Sessions & QR Codes</div>
+
       <div class="qr-panel">
         <div class="qr-panel-select-row">
           <select class="qr-session-select" id="qr-session-select" onchange="renderQRPanel()">
@@ -491,12 +492,8 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
         </div>
       </div>
       <button class="btn-download-history" onclick="downloadAllSessionScanHistory()" style="margin-top:10px;"><i class="ti ti-table-export"></i> Download all scan history</button>
-    </div>
 
-    <!-- Session Management -->
-    <div class="section mt-16">
-      <div class="slabel">Manage Sessions</div>
-      <button class="btn-add-session" id="btn-show-new-form" onclick="toggleNewSessionForm(true)"><i class="ti ti-plus"></i> Add New Session</button>
+      <button class="btn-add-session" id="btn-show-new-form" onclick="toggleNewSessionForm(true)" style="margin-top:12px;"><i class="ti ti-plus"></i> Add New Session</button>
       <div class="new-session-form" id="new-session-form">
         <h4><i class="ti ti-plus" style="font-size:13px;color:var(--terra);margin-right:4px;"></i>New Session</h4>
         <div><label class="form-label" style="font-size:11px;">Session Name</label><input class="new-form-input" id="new-sess-name" type="text" placeholder="e.g. Session 11"></div>
@@ -505,7 +502,8 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
             <select class="new-form-select" id="new-sess-type"><option value="Sharing">Sharing</option><option value="Workshop">Workshop</option><option value="Sharing &amp; Workshop">Sharing &amp; Workshop</option></select></div>
           <div><label class="form-label" style="font-size:11px;display:block;margin-bottom:5px;">Time</label><input class="new-form-input" id="new-sess-time" type="text" placeholder="e.g. 09:00–10:00"></div>
         </div>
-        <div><label class="form-label" style="font-size:11px;display:block;margin-bottom:5px;">Location</label><input class="new-form-input" id="new-sess-loc" type="text" placeholder="e.g. Main Hall, Room A"></div>
+        <div><label class="form-label" style="font-size:11px;display:block;margin-bottom:5px;">Location</label>
+          <select class="new-form-select" id="new-sess-loc"><option value="Building1">Building1</option><option value="Building2">Building2</option><option value="Building3">Building3</option></select></div>
         <div><label class="form-label" style="font-size:11px;display:block;margin-bottom:5px;">Description</label><input class="new-form-input" id="new-sess-desc" type="text" placeholder="Short description"></div>
         <div class="new-form-actions">
           <button class="btn-create" id="btn-create-session" onclick="createSession()"><i class="ti ti-check"></i> Create Session</button>
@@ -563,7 +561,8 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbx9FDwSPE9aAROR2MU_MYpT
 var currentUser = null, allSessions = [], adminUsers = [], activeFilter = 'all';
 var scanStream = null, scanAnimFrame = null, scanDone = false;
 var countdownTimer = null;
-var sessionsShown = 4; // pagination state
+var sessionPage = 0, sessionPageSize = 4; // participant session paging state
+var LOCATION_OPTIONS = ['Building1','Building2','Building3'];
 
 // ── API ──
 function apiRequest(action, payload) {
@@ -592,6 +591,16 @@ function normalizeSession(s){
     type:String(s.type||s.session_type||'Sharing'), desc:String(s.desc||s.description||''),
     icon:String(s.icon||'ti-brain'), location:String(s.location||''), time:String(s.time||''),
     qrActive:Boolean(s.qrActive), qrExpiresAt:Number(s.qrExpiresAt||0), qrToken:String(s.qrToken||'') };
+}
+
+function htmlAttr(v){
+  return String(v||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function buildLocationOptions(selected){
+  selected=String(selected||'');
+  return LOCATION_OPTIONS.map(function(loc){
+    return '<option value="'+htmlAttr(loc)+'"'+(loc===selected?' selected':'')+'>'+loc+'</option>';
+  }).join('');
 }
 
 // ── Date helpers ──
@@ -669,7 +678,7 @@ async function bootUser(){
     document.getElementById('a-logged-as').textContent=currentUser.name+' · '+currentUser.email;
     renderAdmin(); showScreen('admin');
   } else {
-    sessionsShown=4;
+    sessionPage=0;
     renderParticipant(); showScreen('participant');
   }
 }
@@ -758,7 +767,10 @@ function renderSessions(){
   var u=currentUser, grid=document.getElementById('p-sessions');
   grid.innerHTML='';
   var total=allSessions.length;
-  var visible=allSessions.slice(0,sessionsShown);
+  var totalPages=Math.max(1,Math.ceil(total/sessionPageSize));
+  if(sessionPage>=totalPages) sessionPage=0;
+  var start=sessionPage*sessionPageSize;
+  var visible=allSessions.slice(start,start+sessionPageSize);
   visible.forEach(function(s){
     var claimed=u.claimedSessions.indexOf(s.id)!==-1;
     var status=claimed?'col':(s.qrActive?'avl':'upc');
@@ -767,7 +779,6 @@ function renderSessions(){
     var rawTs=u.scanTimestamps&&u.scanTimestamps[s.id]?u.scanTimestamps[s.id]:'';
     var dateOnly=rawTs?formatDateOnly(rawTs):'';
     var tsHtml=dateOnly?'<div class="scan-ts"><i class="ti ti-calendar"></i>Stamped: '+dateOnly+'</div>':'';
-    // Location + time meta
     var metaParts=[];
     if(s.time)     metaParts.push('<span class="sess-meta-pill"><i class="ti ti-clock"></i>'+s.time+'</span>');
     if(s.location) metaParts.push('<span class="sess-meta-pill"><i class="ti ti-map-pin"></i>'+s.location+'</span>');
@@ -786,11 +797,24 @@ function renderSessions(){
       '</div>';
     grid.appendChild(card);
   });
-  var btn=document.getElementById('btn-show-more');
-  if(sessionsShown<total){ btn.style.display='flex'; btn.innerHTML='<i class="ti ti-chevron-down"></i> Show more ('+(total-sessionsShown)+' remaining)'; }
-  else { btn.style.display='none'; }
+  var btn=document.getElementById('btn-next-sessions');
+  if(total>sessionPageSize){
+    var nextPage=(sessionPage+1)%totalPages;
+    var nextStart=nextPage*sessionPageSize+1;
+    var nextEnd=Math.min(total,(nextPage+1)*sessionPageSize);
+    btn.style.display='flex';
+    btn.innerHTML=nextPage===0
+      ? '<i class="ti ti-rotate-clockwise"></i> Back to first sessions'
+      : '<i class="ti ti-arrow-right"></i> Next sessions ('+nextStart+'–'+nextEnd+')';
+  } else {
+    btn.style.display='none';
+  }
 }
-function showMoreSessions(){ sessionsShown+=4; renderSessions(); }
+function showNextSessions(){
+  var totalPages=Math.max(1,Math.ceil(allSessions.length/sessionPageSize));
+  sessionPage=(sessionPage+1)%totalPages;
+  renderSessions();
+}
 
 // ── QR Scanner ──
 function openScanner(){
@@ -979,6 +1003,7 @@ function renderSessionMgmt(){
     var typeOpts=['Sharing','Workshop','Sharing & Workshop'].map(function(t){
       return '<option value="'+t+'"'+(t===s.type?' selected':'')+'>'+t+'</option>';
     }).join('');
+    var locOpts=buildLocationOptions(s.location);
     var editForm=
       '<div class="sess-edit-form" id="edit-form-'+s.id+'">'+
         '<div><label class="form-label" style="font-size:10px;">Session Name</label>'+
@@ -990,7 +1015,7 @@ function renderSessionMgmt(){
           '<input class="edit-form-input" id="ef-time-'+s.id+'" value="'+s.time.replace(/"/g,'&quot;')+'" placeholder="09:00–10:00"></div>'+
         '</div>'+
         '<div><label class="form-label" style="font-size:10px;">Location</label>'+
-        '<input class="edit-form-input" id="ef-loc-'+s.id+'" value="'+s.location.replace(/"/g,'&quot;')+'" placeholder="e.g. Room A"></div>'+
+        '<select class="edit-form-select" id="ef-loc-'+s.id+'">'+locOpts+'</select></div>'+
         '<div><label class="form-label" style="font-size:10px;">Description</label>'+
         '<input class="edit-form-input" id="ef-desc-'+s.id+'" value="'+s.desc.replace(/"/g,'&quot;')+'" placeholder="Description"></div>'+
         '<div class="edit-form-actions">'+
@@ -1016,7 +1041,10 @@ function renderSessionMgmt(){
 function toggleNewSessionForm(open){
   document.getElementById('new-session-form').classList.toggle('open',open);
   document.getElementById('btn-show-new-form').style.display=open?'none':'flex';
-  if(!open){ ['new-sess-name','new-sess-desc','new-sess-loc','new-sess-time'].forEach(function(id){ document.getElementById(id).value=''; }); }
+  if(!open){
+    ['new-sess-name','new-sess-desc','new-sess-time'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('new-sess-loc').value='Building1';
+  }
 }
 
 async function createSession(){
@@ -1028,6 +1056,7 @@ async function createSession(){
     var location=document.getElementById('new-sess-loc').value.trim();
     var desc=document.getElementById('new-sess-desc').value.trim();
     if(!name){ alert('Please enter a session name.'); return; }
+    if(LOCATION_OPTIONS.indexOf(location)===-1){ alert('Please select a valid location.'); return; }
     var data=await apiRequest('createSession',{adminEmail:currentUser.email,sessionName:name,sessionType:type,time:time,location:location,description:desc});
     adminUsers=(data.participants||[]).map(normalizeUser);
     allSessions=(data.sessions||[]).map(normalizeSession);
@@ -1053,6 +1082,7 @@ async function saveSession(sid){
     var location=document.getElementById('ef-loc-'+sid).value.trim();
     var desc=document.getElementById('ef-desc-'+sid).value.trim();
     if(!name){ alert('Session name is required.'); return; }
+    if(LOCATION_OPTIONS.indexOf(location)===-1){ alert('Please select a valid location.'); return; }
     var data=await apiRequest('updateSession',{adminEmail:currentUser.email,sessionId:sid,sessionName:name,sessionType:type,time:time,location:location,description:desc});
     adminUsers=(data.participants||[]).map(normalizeUser);
     allSessions=(data.sessions||[]).map(normalizeSession);
