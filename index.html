@@ -458,9 +458,9 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
       </div>
     </div>
 
-    <!-- Session Management + QR Panel -->
+    <!-- Session Management -->
     <div class="section mt-16">
-      <div class="slabel">Manage Sessions & QR Codes</div>
+      <div class="slabel">Manage Sessions</div>
 
       <div class="qr-panel">
         <div class="qr-panel-select-row">
@@ -489,9 +489,10 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
               <button class="btn-download-history" id="btn-panel-history" onclick="downloadPanelHistory()"><i class="ti ti-table-export"></i> Download scan history</button>
             </div>
           </div>
+
+          <div class="sess-mgmt-card" id="selected-session-card" style="margin-top:12px;"></div>
         </div>
       </div>
-      <button class="btn-download-history" onclick="downloadAllSessionScanHistory()" style="margin-top:10px;"><i class="ti ti-table-export"></i> Download all scan history</button>
 
       <button class="btn-add-session" id="btn-show-new-form" onclick="toggleNewSessionForm(true)" style="margin-top:12px;"><i class="ti ti-plus"></i> Add New Session</button>
       <div class="new-session-form" id="new-session-form">
@@ -510,7 +511,8 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
           <button class="btn-cancel-new" onclick="toggleNewSessionForm(false)">Cancel</button>
         </div>
       </div>
-      <div class="sess-mgmt-list" id="sess-mgmt-list"></div>
+
+      <button class="btn-download-history" onclick="downloadAllSessionScanHistory()" style="margin-top:10px;"><i class="ti ti-table-export"></i> Download all scan history</button>
     </div>
 
     <!-- Participants -->
@@ -880,7 +882,7 @@ async function submitQRToken(token){
 }
 
 // ══ ADMIN ══
-function renderAdmin(){ populateQRSessionSelect(); renderQRPanel(); renderSessionMgmt(); renderAdminParticipants(); }
+function renderAdmin(){ populateQRSessionSelect(); renderQRPanel(); renderAdminParticipants(); }
 
 // Populate the session dropdown
 function populateQRSessionSelect(){
@@ -900,10 +902,11 @@ function renderQRPanel(){
   if(countdownTimer){ clearInterval(countdownTimer); countdownTimer=null; }
   var sid=Number(document.getElementById('qr-session-select').value);
   var content=document.getElementById('qr-panel-content');
-  if(!sid){ content.style.display='none'; return; }
+  if(!sid){ content.style.display='none'; renderSelectedSessionMgmt(null); return; }
   var s=allSessions.find(function(x){ return x.id===sid; });
-  if(!s){ content.style.display='none'; return; }
+  if(!s){ content.style.display='none'; renderSelectedSessionMgmt(null); return; }
   content.style.display='block';
+  renderSelectedSessionMgmt(s);
 
   var isActive=s.qrActive&&s.qrExpiresAt>Date.now();
   var claimCount=adminUsers.filter(function(u){ return u.claimedSessions.indexOf(sid)!==-1; }).length;
@@ -993,49 +996,47 @@ function downloadPanelHistory(){
   downloadSessionScanHistory(sid);
 }
 
-// Session management list (admin)
-function renderSessionMgmt(){
-  var list=document.getElementById('sess-mgmt-list');
-  list.innerHTML='';
-  allSessions.forEach(function(s){
-    var card=document.createElement('div');
-    card.className='sess-mgmt-card';
-    var typeOpts=['Sharing','Workshop','Sharing & Workshop'].map(function(t){
-      return '<option value="'+t+'"'+(t===s.type?' selected':'')+'>'+t+'</option>';
-    }).join('');
-    var locOpts=buildLocationOptions(s.location);
-    var editForm=
-      '<div class="sess-edit-form" id="edit-form-'+s.id+'">'+
-        '<div><label class="form-label" style="font-size:10px;">Session Name</label>'+
-        '<input class="edit-form-input" id="ef-name-'+s.id+'" value="'+s.name.replace(/"/g,'&quot;')+'" placeholder="Session name"></div>'+
-        '<div class="edit-form-row">'+
-          '<div><label class="form-label" style="font-size:10px;">Type</label>'+
-          '<select class="edit-form-select" id="ef-type-'+s.id+'">'+typeOpts+'</select></div>'+
-          '<div><label class="form-label" style="font-size:10px;">Time</label>'+
-          '<input class="edit-form-input" id="ef-time-'+s.id+'" value="'+s.time.replace(/"/g,'&quot;')+'" placeholder="09:00–10:00"></div>'+
-        '</div>'+
-        '<div><label class="form-label" style="font-size:10px;">Location</label>'+
-        '<select class="edit-form-select" id="ef-loc-'+s.id+'">'+locOpts+'</select></div>'+
-        '<div><label class="form-label" style="font-size:10px;">Description</label>'+
-        '<input class="edit-form-input" id="ef-desc-'+s.id+'" value="'+s.desc.replace(/"/g,'&quot;')+'" placeholder="Description"></div>'+
-        '<div class="edit-form-actions">'+
-          '<button class="btn-save" id="btn-save-'+s.id+'" onclick="saveSession('+s.id+')"><i class="ti ti-check"></i> Save</button>'+
-          '<button class="btn-cancel-edit" onclick="toggleEditForm('+s.id+')">Cancel</button>'+
-        '</div>'+
-      '</div>';
-    card.innerHTML=
-      '<div class="sess-mgmt-top">'+
-        '<div>'+
-          '<div class="sess-mgmt-name"><i class="ti '+s.icon+'" style="font-size:12px;margin-right:4px;color:var(--terra);"></i>'+s.name+'</div>'+
-          '<div class="sess-mgmt-meta">'+s.type+(s.time?' · '+s.time:'')+(s.location?' · '+s.location:'')+'</div>'+
-        '</div>'+
-        '<div style="display:flex;gap:6px;">'+
-          '<button class="btn-icon" title="Edit" onclick="toggleEditForm('+s.id+')"><i class="ti ti-pencil"></i></button>'+
-          '<button class="btn-icon danger" title="Delete" onclick="deleteSession('+s.id+',\''+s.name.replace(/'/g,"\\'")+'\')"><i class="ti ti-trash"></i></button>'+
-        '</div>'+
-      '</div>'+editForm;
-    list.appendChild(card);
-  });
+// Selected session management (admin)
+function renderSelectedSessionMgmt(s){
+  var card=document.getElementById('selected-session-card');
+  if(!card) return;
+  if(!s){ card.innerHTML=''; return; }
+
+  var typeOpts=['Sharing','Workshop','Sharing & Workshop'].map(function(t){
+    return '<option value="'+htmlAttr(t)+'"'+(t===s.type?' selected':'')+'>'+t+'</option>';
+  }).join('');
+  var locOpts=buildLocationOptions(s.location);
+  var editForm=
+    '<div class="sess-edit-form" id="edit-form-'+s.id+'">'+
+      '<div><label class="form-label" style="font-size:10px;">Session Name</label>'+
+      '<input class="edit-form-input" id="ef-name-'+s.id+'" value="'+htmlAttr(s.name)+'" placeholder="Session name"></div>'+
+      '<div class="edit-form-row">'+
+        '<div><label class="form-label" style="font-size:10px;">Type</label>'+
+        '<select class="edit-form-select" id="ef-type-'+s.id+'">'+typeOpts+'</select></div>'+
+        '<div><label class="form-label" style="font-size:10px;">Time</label>'+
+        '<input class="edit-form-input" id="ef-time-'+s.id+'" value="'+htmlAttr(s.time)+'" placeholder="09:00–10:00"></div>'+
+      '</div>'+
+      '<div><label class="form-label" style="font-size:10px;">Location</label>'+
+      '<select class="edit-form-select" id="ef-loc-'+s.id+'">'+locOpts+'</select></div>'+
+      '<div><label class="form-label" style="font-size:10px;">Description</label>'+
+      '<input class="edit-form-input" id="ef-desc-'+s.id+'" value="'+htmlAttr(s.desc)+'" placeholder="Description"></div>'+
+      '<div class="edit-form-actions">'+
+        '<button class="btn-save" id="btn-save-'+s.id+'" onclick="saveSession('+s.id+')"><i class="ti ti-check"></i> Save Changes</button>'+
+        '<button class="btn-cancel-edit" onclick="toggleEditForm('+s.id+')">Cancel</button>'+
+      '</div>'+
+    '</div>';
+
+  card.innerHTML=
+    '<div class="sess-mgmt-top">'+
+      '<div>'+
+        '<div class="sess-mgmt-name"><i class="ti '+htmlAttr(s.icon)+'" style="font-size:12px;margin-right:4px;color:var(--terra);"></i>'+htmlAttr(s.name)+'</div>'+
+        '<div class="sess-mgmt-meta">'+htmlAttr(s.type)+(s.time?' · '+htmlAttr(s.time):'')+(s.location?' · '+htmlAttr(s.location):'')+'</div>'+
+      '</div>'+
+      '<div style="display:flex;gap:6px;">'+
+        '<button class="btn-icon" title="Edit" onclick="toggleEditForm('+s.id+')"><i class="ti ti-pencil"></i></button>'+
+        '<button class="btn-icon danger" title="Delete" onclick="deleteSelectedSession()"><i class="ti ti-trash"></i></button>'+
+      '</div>'+
+    '</div>'+editForm;
 }
 
 function toggleNewSessionForm(open){
@@ -1057,11 +1058,15 @@ async function createSession(){
     var desc=document.getElementById('new-sess-desc').value.trim();
     if(!name){ alert('Please enter a session name.'); return; }
     if(LOCATION_OPTIONS.indexOf(location)===-1){ alert('Please select a valid location.'); return; }
+    var existingIds={};
+    allSessions.forEach(function(s){ existingIds[s.id]=true; });
     var data=await apiRequest('createSession',{adminEmail:currentUser.email,sessionName:name,sessionType:type,time:time,location:location,description:desc});
     adminUsers=(data.participants||[]).map(normalizeUser);
     allSessions=(data.sessions||[]).map(normalizeSession);
+    var created=allSessions.find(function(s){ return !existingIds[s.id]; }) || allSessions[allSessions.length-1];
     toggleNewSessionForm(false);
     renderAdmin();
+    if(created){ document.getElementById('qr-session-select').value=created.id; renderQRPanel(); }
   }catch(e){ alert('Error: '+e.message); }
   finally{ restore('btn-create-session'); }
 }
@@ -1089,6 +1094,14 @@ async function saveSession(sid){
     renderAdmin();
   }catch(e){ alert('Error: '+e.message); }
   finally{ restore(btnId); }
+}
+
+function deleteSelectedSession(){
+  var sid=Number(document.getElementById('qr-session-select').value);
+  if(!sid){ alert('Please select a session first.'); return; }
+  var s=allSessions.find(function(x){ return x.id===sid; });
+  if(!s){ alert('Session not found.'); return; }
+  deleteSession(sid,s.name);
 }
 
 async function deleteSession(sid,name){
