@@ -71,34 +71,40 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .slabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ts);margin-bottom:12px;}
 .card{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:18px;box-shadow:var(--shadow);}
 
-/* MILESTONE CARDS */
-.ms-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
-.ms-card{border-radius:var(--r-md);border:1.5px solid #E8DDD4;padding:12px 10px;display:flex;gap:9px;align-items:center;transition:.3s;}
-.ms-card.sbux-on{border-color:var(--green);background:var(--green-l);}
-.ms-card.gadget-on{border-color:var(--blue);background:var(--blue-l);}
-.ms-card.redeemed{border-color:#C4B5A8;background:#F5F2EE;}
-.ms-gfx{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.g-sbux{background:var(--green);}.g-gadget{background:var(--navy);}
-.ms-card.redeemed .g-sbux,.ms-card.redeemed .g-gadget{background:#B0A898;}
-.ms-info h4{font-size:12px;font-weight:700;color:var(--tm);margin-bottom:2px;line-height:1.3;}
-.ms-info p{font-size:11px;color:var(--ts);}
-.ms-card.sbux-on .ms-info p{color:var(--green);font-weight:600;}
-.ms-card.gadget-on .ms-info p{color:var(--blue);font-weight:600;}
-.ms-card.redeemed .ms-info p{color:#B0A898;font-weight:600;}
-
-/* Rewards redeemed single banner */
-.reward-banner{border-radius:var(--r-md);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.reward-banner.sbux-only{background:var(--green-l);border:1.5px solid var(--green);}
-.reward-banner.gadget-only{background:var(--blue-l);border:1.5px solid var(--blue);}
-.reward-banner.both{background:linear-gradient(135deg,var(--green-l) 0%,var(--blue-l) 100%);border:1.5px solid var(--green);}
-.reward-banner i{font-size:22px;flex-shrink:0;}
-.reward-banner.sbux-only i{color:var(--green);}
-.reward-banner.gadget-only i{color:var(--blue);}
-.reward-banner.both i{color:var(--green);}
-.reward-banner-text{font-size:13px;font-weight:600;line-height:1.4;}
-.reward-banner.sbux-only .reward-banner-text{color:var(--green-d);}
-.reward-banner.gadget-only .reward-banner-text{color:var(--blue-d);}
-.reward-banner.both .reward-banner-text{color:var(--green-d);}
+/* REWARD CAROUSEL */
+.reward-carousel{margin-bottom:18px;border:1.5px solid #E8DDD4;border-radius:var(--r-lg);padding:14px;background:#fff;}
+.reward-carousel-stage{position:relative;}
+.reward-slide{display:none;}
+.reward-slide.active{display:block;}
+.reward-visual{height:180px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:14px;border:1px solid rgba(255,255,255,.5);}
+.reward-visual.sbux{background:linear-gradient(135deg,#EAF7F0 0%,#D8EEE3 100%);}
+.reward-visual.gadget{background:linear-gradient(135deg,#EAF3FF 0%,#D9E6FA 100%);}
+.reward-glow{position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.55);filter:blur(10px);}
+.reward-photo{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;}
+.reward-photo-card{width:210px;height:128px;border-radius:18px;background:linear-gradient(135deg,#006241 0%,#1F8C63 100%);box-shadow:0 16px 30px rgba(0,112,74,.22);padding:18px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;transform:rotate(-7deg);}
+.reward-photo-card-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.reward-photo-card-chip{width:26px;height:20px;border-radius:6px;background:rgba(255,255,255,.35);}
+.reward-photo-card-brand{font-size:12px;font-weight:700;letter-spacing:.4px;opacity:.95;}
+.reward-photo-card-bottom{font-size:20px;font-weight:700;line-height:1.15;max-width:135px;}
+.reward-photo-gadget{width:120px;height:148px;border-radius:26px;background:linear-gradient(160deg,#274677 0%,#162B4C 100%);box-shadow:0 16px 30px rgba(26,58,92,.28);padding:10px;position:relative;}
+.reward-photo-screen{width:100%;height:100%;border-radius:20px;background:linear-gradient(180deg,#F8FBFF 0%,#D9E8FF 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.reward-photo-screen::before{content:'';position:absolute;inset:18px 24px auto 24px;height:10px;border-radius:99px;background:rgba(45,110,196,.18);}
+.reward-photo-screen::after{content:'';position:absolute;left:24px;right:24px;bottom:22px;height:34px;border-radius:14px;background:rgba(45,110,196,.12);}
+.reward-photo-icon{position:relative;z-index:1;width:52px;height:52px;border-radius:16px;background:#2D6EC4;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(45,110,196,.25);}
+.reward-photo-icon i{font-size:28px;color:#fff;}
+.reward-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.reward-text h4{font-size:17px;font-weight:700;color:var(--tm);margin-bottom:4px;}
+.reward-text p{font-size:13px;line-height:1.45;color:var(--ts);}
+.reward-state{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap;}
+.reward-state.locked{background:var(--cream-d);color:var(--ts);}
+.reward-state.unlocked{background:var(--green-l);color:var(--green-d);}
+.reward-state.redeemed{background:#F5F2EE;color:#8B8276;}
+.reward-carousel-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;}
+.reward-nav-btn{width:34px;height:34px;border:none;border-radius:50%;background:var(--terra-p);color:var(--terra);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:opacity .2s, transform .2s;}
+.reward-nav-btn:hover{opacity:.9;transform:translateY(-1px);}
+.reward-carousel-dots{display:flex;align-items:center;justify-content:center;gap:8px;flex:1;}
+.reward-dot-btn{width:8px;height:8px;border:none;border-radius:50%;background:#D9D1C8;cursor:pointer;transition:all .2s;}
+.reward-dot-btn.active{width:22px;border-radius:99px;background:var(--terra);}
 
 /* TRACK */
 .track{margin-bottom:20px;}
@@ -229,6 +235,14 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .btn-download-qr{width:124px;padding:8px;background:#fff;color:var(--navy);border:1.5px solid var(--blue);border-radius:var(--r-sm);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s;white-space:nowrap;}
 .btn-download-qr:hover{background:var(--blue-l);}
 .qr-controls{display:flex;flex-direction:column;gap:8px;}
+.qr-action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.btn-action-outline{width:100%;padding:9px 12px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:background .2s;}
+.btn-action-outline:hover{background:var(--cream-d);}
+.btn-action-outline.danger{color:var(--red);border-color:#FCA5A5;}
+.btn-action-outline.danger:hover{background:var(--red-l);}
+.selected-session-edit-slot{margin-top:10px;}
+.data-panel{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;}
+.data-panel-row{display:grid;grid-template-columns:1fr;gap:9px;}
 .qr-status-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .qr-status-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;}
 .qr-status-pill.inactive{background:var(--gray-l);color:var(--gray);}
@@ -250,17 +264,17 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
 .selected-session-mini strong{font-size:12px;color:var(--tm);font-weight:700;}
 .qr-primary-row{display:grid;grid-template-columns:minmax(108px,.75fr) minmax(0,1fr);gap:8px;align-items:center;}
 .qr-primary-row .duration-select,.qr-primary-row .btn-activate{height:38px;}
-.qr-action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;}
-.btn-action-outline{height:38px;padding:0 11px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s;white-space:nowrap;}
-.btn-action-outline:hover{background:var(--cream-d);}
-.btn-action-outline.danger{color:var(--red);border-color:#F3B6B6;}
-.btn-action-outline.danger:hover{background:var(--red-l);}
+.qr-action-row{display:grid;grid-template-columns:1fr 38px 38px;gap:8px;align-items:center;}
+.btn-mini{height:38px;padding:0 11px;background:#fff;color:var(--green-d);border:1.5px solid #BFD8C7;border-radius:var(--r-sm);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s;white-space:nowrap;}
+.btn-mini:hover{background:var(--green-l);}
+.btn-mini-icon{width:38px;height:38px;background:#fff;color:var(--ts);border:1.5px solid var(--cream-d);border-radius:var(--r-sm);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.btn-mini-icon:hover{background:var(--cream-d);}
+.btn-mini-icon.danger{color:var(--red);border-color:#F3B6B6;}
+.btn-mini-icon.danger:hover{background:var(--red-l);}
 .selected-session-edit-slot{margin-top:10px;}
 .selected-session-edit-slot:empty{display:none;}
 .selected-session-edit-slot .sess-edit-form{margin-top:0;}
-.data-panel{background:#fff;border-radius:var(--r-lg);border:.5px solid #E8DDD4;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;}
-.data-panel-row{display:grid;grid-template-columns:1fr;gap:9px;}
-@media(max-width:380px){.qr-primary-row{grid-template-columns:1fr;}.qr-action-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:380px){.qr-primary-row{grid-template-columns:1fr;}.qr-action-row{grid-template-columns:1fr 38px 38px;}}
 
 /* SESSION LIST MANAGEMENT (admin) */
 .sess-mgmt-list{display:grid;gap:10px;margin-top:12px;}
@@ -405,16 +419,12 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
     <div class="section">
       <div class="slabel">Your stamp card</div>
       <div class="card">
-        <!-- Reward banner (shows only when something is redeemed) -->
-        <div id="p-reward-banner" style="display:none;"></div>
-        <div class="ms-row">
-          <div class="ms-card" id="p-ms5">
-            <div class="ms-gfx g-sbux"><svg width="22" height="22" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="10" r="5" fill="white" opacity=".9"/><path d="M9 15 Q13 20 17 15" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
-            <div class="ms-info"><h4>Starbucks card</h4><p id="p-ms5-sub">Unlock at 5 stamps</p></div>
-          </div>
-          <div class="ms-card" id="p-ms10">
-            <div class="ms-gfx g-gadget"><svg width="22" height="22" viewBox="0 0 26 26" fill="none"><rect x="6" y="4" width="14" height="18" rx="2.5" fill="white" opacity=".15"/><rect x="8" y="6" width="10" height="11" rx="1.5" fill="white" opacity=".9"/><circle cx="13" cy="20" r="1.2" fill="white" opacity=".8"/></svg></div>
-            <div class="ms-info"><h4>Free gadget</h4><p id="p-ms10-sub">Unlock at 10 stamps</p></div>
+        <div class="reward-carousel" id="p-reward-carousel">
+          <div class="reward-carousel-stage" id="p-reward-carousel-stage"></div>
+          <div class="reward-carousel-nav">
+            <button class="reward-nav-btn" type="button" aria-label="Previous reward" onclick="changeRewardSlide(-1)"><i class="ti ti-chevron-left"></i></button>
+            <div class="reward-carousel-dots" id="p-reward-carousel-dots"></div>
+            <button class="reward-nav-btn" type="button" aria-label="Next reward" onclick="changeRewardSlide(1)"><i class="ti ti-chevron-right"></i></button>
           </div>
         </div>
         <div class="track">
@@ -505,14 +515,19 @@ body{background:#E4DDD5;min-height:100vh;display:flex;justify-content:center;fon
                 </select>
                 <button class="btn-activate" id="btn-panel-activate" onclick="activatePanelQR()"><i class="ti ti-qrcode"></i> Activate QR</button>
               </div>
-              <div class="qr-action-row" id="selected-session-actions"></div>
               <div class="countdown" id="qr-panel-countdown" style="display:none;"><i class="ti ti-clock"></i> <span></span></div>
+              <div class="qr-action-row">
+                <button class="btn-mini" id="btn-panel-history" onclick="downloadPanelHistory()"><i class="ti ti-table-export"></i> History</button>
+                <button class="btn-mini-icon" id="btn-selected-edit" title="Edit session"><i class="ti ti-pencil"></i></button>
+                <button class="btn-mini-icon danger" id="btn-selected-delete" title="Delete session"><i class="ti ti-trash"></i></button>
+              </div>
             </div>
           </div>
 
           <div class="selected-session-edit-slot" id="selected-session-card"></div>
         </div>
       </div>
+      <button class="btn-download-history" onclick="downloadAllSessionScanHistory()" style="margin-top:10px;"><i class="ti ti-table-export"></i> Download all scan history</button>
 
       <button class="btn-add-session" id="btn-show-new-form" onclick="toggleNewSessionForm(true)" style="margin-top:12px;"><i class="ti ti-plus"></i> Add New Session</button>
       <div class="new-session-form" id="new-session-form">
@@ -595,6 +610,7 @@ var currentUser = null, allSessions = [], adminUsers = [], activeFilter = 'all';
 var scanStream = null, scanAnimFrame = null, scanDone = false;
 var countdownTimer = null;
 var sessionPage = 0, sessionPageSize = 4; // participant session paging state
+var rewardSlideIndex = 0;
 var LOCATION_OPTIONS = ['Building1','Building2','Building3'];
 
 // ── API ──
@@ -741,38 +757,67 @@ function renderStamps(){
   document.getElementById('p-d5').className='dot'+(u.stamps>=5?' rg':'');
   document.getElementById('p-d10').className='dot'+(u.stamps>=10?' rb':'');
 
-  // Milestone cards
-  var ms5=document.getElementById('p-ms5'), ms10=document.getElementById('p-ms10');
-  ms5.classList.remove('sbux-on','redeemed'); ms10.classList.remove('gadget-on','redeemed');
-  if(u.sbux)          { ms5.classList.add('redeemed');   document.getElementById('p-ms5-sub').textContent='Redeemed ✓'; }
-  else if(u.stamps>=5){ ms5.classList.add('sbux-on');    document.getElementById('p-ms5-sub').textContent='Unlocked!'; }
-  else                { document.getElementById('p-ms5-sub').textContent='Unlock at 5 stamps'; }
-  if(u.gadget)         { ms10.classList.add('redeemed');   document.getElementById('p-ms10-sub').textContent='Redeemed ✓'; }
-  else if(u.stamps>=10){ ms10.classList.add('gadget-on'); document.getElementById('p-ms10-sub').textContent='Unlocked!'; }
-  else                 { document.getElementById('p-ms10-sub').textContent='Unlock at 10 stamps'; }
-
-  // Reward banner — single merged notice when any reward redeemed
-  var banner=document.getElementById('p-reward-banner');
-  if(u.sbux&&u.gadget){
-    banner.style.display='flex';
-    banner.className='reward-banner both';
-    banner.innerHTML='<i class="ti ti-gift"></i><div class="reward-banner-text">Both rewards redeemed — Starbucks card &amp; free gadget. Well done! 🎉</div>';
-  } else if(u.sbux){
-    banner.style.display='flex';
-    banner.className='reward-banner sbux-only';
-    banner.innerHTML='<i class="ti ti-coffee"></i><div class="reward-banner-text">Starbucks card redeemed ✓ — Keep going for your free gadget!</div>';
-  } else if(u.gadget){
-    banner.style.display='flex';
-    banner.className='reward-banner gadget-only';
-    banner.innerHTML='<i class="ti ti-device-laptop"></i><div class="reward-banner-text">Free gadget redeemed ✓ — Congratulations on completing the journey!</div>';
-  } else {
-    banner.style.display='none';
-    banner.innerHTML='';
-  }
+  renderRewardCarousel();
 
   document.getElementById('btn-open-scanner').disabled=u.stamps>=10;
   updateRewardQRCard('qr5-card','qr5-sub','qr5-svg',3,u.stamps>=5,u.sbux,'5 stamps needed');
   updateRewardQRCard('qr10-card','qr10-sub','qr10-svg',7,u.stamps>=10,u.gadget,'10 stamps needed');
+}
+
+
+function getRewardCarouselItems(){
+  var u=currentUser||{};
+  return [
+    {
+      key:'sbux',
+      title:'Starbucks card',
+      note:u.sbux ? 'Redeemed successfully. Enjoy your reward!' : (u.stamps>=5 ? 'Unlocked — show your reward QR to the facilitator.' : 'Unlocks when you reach 5 stamps.'),
+      stateLabel:u.sbux ? 'Redeemed' : (u.stamps>=5 ? 'Unlocked' : 'Locked'),
+      stateClass:u.sbux ? 'redeemed' : (u.stamps>=5 ? 'unlocked' : 'locked'),
+      visualClass:'sbux',
+      visualHtml:'<div class="reward-glow"></div><div class="reward-photo"><div class="reward-photo-card"><div class="reward-photo-card-top"><span class="reward-photo-card-brand">STARBUCKS</span><span class="reward-photo-card-chip"></span></div><div class="reward-photo-card-bottom">Gift Card</div></div></div>'
+    },
+    {
+      key:'gadget',
+      title:'Free gadget',
+      note:u.gadget ? 'Redeemed successfully. Congratulations!' : (u.stamps>=10 ? 'Unlocked — show your reward QR to the facilitator.' : 'Unlocks when you reach 10 stamps.'),
+      stateLabel:u.gadget ? 'Redeemed' : (u.stamps>=10 ? 'Unlocked' : 'Locked'),
+      stateClass:u.gadget ? 'redeemed' : (u.stamps>=10 ? 'unlocked' : 'locked'),
+      visualClass:'gadget',
+      visualHtml:'<div class="reward-glow"></div><div class="reward-photo"><div class="reward-photo-gadget"><div class="reward-photo-screen"><div class="reward-photo-icon"><i class="ti ti-device-mobile"></i></div></div></div></div>'
+    }
+  ];
+}
+
+function renderRewardCarousel(){
+  var stage=document.getElementById('p-reward-carousel-stage');
+  var dots=document.getElementById('p-reward-carousel-dots');
+  if(!stage||!dots) return;
+  var items=getRewardCarouselItems();
+  if(rewardSlideIndex>=items.length) rewardSlideIndex=0;
+  stage.innerHTML=items.map(function(item,idx){
+    return '<div class="reward-slide'+(idx===rewardSlideIndex?' active':'')+'">'+
+      '<div class="reward-visual '+item.visualClass+'">'+item.visualHtml+'</div>'+
+      '<div class="reward-meta">'+
+        '<div class="reward-text"><h4>'+item.title+'</h4><p>'+item.note+'</p></div>'+
+        '<span class="reward-state '+item.stateClass+'">'+item.stateLabel+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  dots.innerHTML=items.map(function(item,idx){
+    return '<button class="reward-dot-btn'+(idx===rewardSlideIndex?' active':'')+'" type="button" aria-label="Go to '+item.title+'" onclick="goToRewardSlide('+idx+')"></button>';
+  }).join('');
+}
+
+function changeRewardSlide(step){
+  var items=getRewardCarouselItems();
+  rewardSlideIndex=(rewardSlideIndex+step+items.length)%items.length;
+  renderRewardCarousel();
+}
+
+function goToRewardSlide(index){
+  rewardSlideIndex=index||0;
+  renderRewardCarousel();
 }
 
 function updateRewardQRCard(cardId,subId,svgId,seed,eligible,redeemed,lockedMsg){
@@ -1044,22 +1089,12 @@ function downloadPanelHistory(){
 function renderSelectedSessionMgmt(s){
   var actions=document.getElementById('selected-session-actions');
   var slot=document.getElementById('selected-session-card');
-  var mini=document.getElementById('selected-session-mini');
   if(!actions || !slot) return;
-  if(!s){
-    actions.innerHTML='';
-    slot.innerHTML='';
-    if(mini) mini.innerHTML='';
-    return;
-  }
+  if(!s){ actions.innerHTML=''; slot.innerHTML=''; return; }
 
-  if(mini){
-    mini.innerHTML='<strong>'+htmlAttr(s.name)+'</strong>'+(s.type?' · '+htmlAttr(s.type):'')+(s.location?' · '+htmlAttr(s.location):'');
-  }
-
-  var safeName=String(s.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  var safeName=String(s.name||'').replace(/\/g,'\\').replace(/'/g,"\\'");
   actions.innerHTML=
-    '<button class="btn-action-outline" title="Edit selected session" onclick="toggleEditForm('+s.id+')"><i class="ti ti-pencil"></i> Edit</button>'+ 
+    '<button class="btn-action-outline" title="Edit selected session" onclick="toggleEditForm('+s.id+')"><i class="ti ti-pencil"></i> Edit session</button>'+ 
     '<button class="btn-action-outline danger" title="Delete selected session" onclick="deleteSession('+s.id+',\''+safeName+'\')"><i class="ti ti-trash"></i> Delete</button>';
 
   var typeOpts=['Sharing','Workshop','Sharing & Workshop'].map(function(t){
